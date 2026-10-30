@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120F24">
-<title>Animes Nexora</title>
+<title>Editor de Video Nexora</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bebas+Neue&family=Dela+Gothic+One&family=Kosugi+Maru&family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Permanent+Marker&family=Rampart+One&family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
@@ -46,13 +46,13 @@ button:disabled{opacity:.35;cursor:default}
 /* ---------- Inicio ---------- */
 .home{height:100%;overflow-y:auto;padding:18px 18px 48px;max-width:760px;margin:0 auto}
 .brand{display:flex;align-items:center;gap:12px;margin:4px 0 22px}
-.brand h1{font-family:"Dela Gothic One","M PLUS Rounded 1c",sans-serif;font-weight:400;font-size:25px;margin:0;line-height:1.05}
+.brand h1{font-family:"Dela Gothic One","M PLUS Rounded 1c",sans-serif;font-weight:400;font-size:22px;margin:0;line-height:1.05}
 .brand p{margin:3px 0 0;font-size:12.5px;color:var(--muted);font-weight:500}
 .new{position:relative;overflow:hidden;width:100%;border-radius:24px;padding:22px 20px;color:#fff;text-align:left;
   display:flex;align-items:center;gap:16px;
   background:linear-gradient(125deg,#FF4FA3 0%,#9B5CF6 52%,#2FC9EA 100%);
   box-shadow:0 14px 34px rgba(155,92,246,.32)}
-.new::after{content:"新";position:absolute;right:-6px;bottom:-34px;font-family:"Dela Gothic One",sans-serif;font-size:150px;line-height:1;color:rgba(255,255,255,.16);pointer-events:none}
+.new::after{content:"";position:absolute;right:-28px;top:50%;width:150px;height:150px;margin-top:-75px;background:rgba(255,255,255,.13);clip-path:polygon(28% 18%,28% 82%,82% 50%);pointer-events:none}
 .new .plus{flex:none;width:58px;height:58px;border-radius:18px;background:rgba(255,255,255,.22);display:grid;place-items:center}
 .new .plus svg{width:30px;height:30px}
 .new strong{display:block;font-size:20px;font-weight:800}
@@ -184,6 +184,47 @@ textarea.txt{width:100%;min-height:78px;border-radius:14px;background:var(--surf
 
 .toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:13.5px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;max-width:88vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+/* ---------- Galería integrada ---------- */
+.gallery{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.g-top{flex:none;display:flex;align-items:center;gap:8px;padding:6px 10px;height:54px}
+.g-top h3{margin:0;font-size:17px;font-weight:800}
+.g-top select{max-width:62%;background:var(--surface2);border:0;border-radius:10px;padding:8px 10px;color:var(--text);font:inherit;font-weight:700;font-size:14px}
+.g-tabs{flex:none;display:flex;border-bottom:1px solid var(--line)}
+.g-tabs button{flex:1;padding:12px 0 13px;font-size:14.5px;font-weight:700;color:var(--muted);position:relative}
+.g-tabs button[aria-selected="true"]{color:var(--text)}
+.g-tabs button[aria-selected="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;width:34px;height:3px;margin-left:-17px;border-radius:3px;background:var(--pink)}
+.g-search{flex:none;padding:4px 12px 10px}
+.g-search input{width:100%;border:0;border-radius:12px;background:var(--surface2);color:var(--text);font:inherit;font-size:16px;padding:11px 14px;-webkit-user-select:text;user-select:text}
+.g-note{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px;font-size:12.5px;color:var(--muted);background:var(--surface);border-bottom:1px solid var(--line)}
+.g-note button{color:var(--pink);font-weight:800;font-size:13px;flex:none}
+.g-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.g-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+@media (min-width:700px){.g-grid{grid-template-columns:repeat(6,1fr)}}
+.g-tile{position:relative;aspect-ratio:1;background:var(--surface2);overflow:hidden;display:block}
+.g-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .15s}
+.g-dur{position:absolute;right:5px;bottom:4px;color:#fff;font-size:11.5px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.85);font-variant-numeric:tabular-nums}
+.g-chk{position:absolute;top:5px;right:5px;width:23px;height:23px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.28);display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.g-tile.on .g-chk{background:var(--pink);border-color:var(--pink)}
+.g-tile.on img{opacity:.72}
+.g-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.g-prev{flex:none;width:42px;height:42px;border-radius:12px;background:var(--surface2);display:grid;place-items:center}
+.g-prev svg{width:18px;height:18px}
+.g-meta{flex:1;min-width:0}
+.g-meta b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.g-meta small{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.g-use{flex:none;background:var(--pink);color:#fff;border-radius:10px;padding:8px 13px;font-weight:800;font-size:13px}
+.g-msg{padding:48px 26px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6}
+.g-msg b{display:block;color:var(--text);font-size:16px;margin-bottom:6px}
+.g-msg .btns{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:18px}
+.g-msg .btn.primary{color:#fff}
+.g-msg .btn.soft{background:var(--surface2);color:var(--text)}
+.g-msg .link{color:var(--pink);font-weight:700;font-size:13.5px}
+.g-bottom{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid var(--line);background:var(--surface)}
+.g-bottom span{font-size:13px;color:var(--muted)}
+.g-bottom .export:disabled{opacity:.4}
+#gAlbum:empty{display:none}
+.gallery[data-mode="audio"] .g-tabs,.gallery[data-mode="audio"] #gAlbum,.gallery[data-mode="audio"] .g-bottom{display:none}
+.gallery[data-mode="visual"] .g-search,.gallery[data-mode="visual"] #gTitle{display:none}
 #pool{position:fixed;left:0;top:0;width:2px;height:2px;opacity:.01;overflow:hidden;pointer-events:none}
 @media (prefers-reduced-motion: reduce){.sheet,.toast{transition:none}}
 @media (min-width:900px){
@@ -205,8 +246,8 @@ textarea.txt{width:100%;min-height:78px;border-radius:14px;background:var(--surf
         <circle cx="35" cy="11" r="2.4" fill="#fff" opacity=".85"/>
       </svg>
       <div>
-        <h1>Animes Nexora</h1>
-        <p>Edita tus clips de anime desde el celular</p>
+        <h1>Editor de Video Nexora</h1>
+        <p>Crea y edita tus videos desde el celular</p>
       </div>
     </header>
 
@@ -269,6 +310,22 @@ textarea.txt{width:100%;min-height:78px;border-radius:14px;background:var(--surf
       <div class="tabs" id="shTabs" role="tablist"></div>
       <div class="sh-body" id="shBody"></div>
     </div>
+  </section>
+
+  <section class="gallery" id="gallery" hidden data-mode="visual" aria-label="Elegir archivos">
+    <div class="g-top">
+      <button class="iconbtn" id="gClose" aria-label="Cerrar"></button>
+      <h3 id="gTitle">Tu audio</h3>
+      <select id="gAlbum" aria-label="Álbum"></select>
+    </div>
+    <div class="g-tabs" role="tablist">
+      <button role="tab" data-gk="video" aria-selected="true">Videos</button>
+      <button role="tab" data-gk="image" aria-selected="false">Fotos</button>
+    </div>
+    <div class="g-search"><input id="gSearch" type="search" placeholder="Buscar en tu música" aria-label="Buscar audio"></div>
+    <div class="g-note" id="gPartial" hidden><span>Solo ves algunos archivos de tu galería.</span><button id="gMoreAccess">Elegir más</button></div>
+    <div class="g-body" id="gBody"><div id="gGrid"></div></div>
+    <div class="g-bottom"><span id="gCount">Toca para elegir</span><button class="export" id="gAdd" disabled>Agregar</button></div>
   </section>
 
   <div class="overlay" id="overlay" hidden>
@@ -1025,34 +1082,210 @@ function styleCSS(v) {
 
 /* ---------- Importar ---------- */
 const fileMedia = $('#fileMedia'), fileAudio = $('#fileAudio');
-function pickMedia() { ensureAudio(); fileMedia.value = ''; fileMedia.click(); }
-function pickAudio() { ensureAudio(); fileAudio.value = ''; fileAudio.click(); }
-fileMedia.addEventListener('change', async () => {
-  const files = [...fileMedia.files]; if (!files.length || !P) return;
-  toast(files.length > 1 ? `Importando ${files.length} archivos…` : 'Importando…');
+function pickMedia() { ensureAudio(); openGallery('visual', async list => { const e = await fetchGalleryItems(list); await importVisual(e); }); }
+function pickAudio() { ensureAudio(); openGallery('audio', async list => { const e = await fetchGalleryItems(list); await importAudio(e[0]); }); }
+let newPending = false;
+async function importVisual(entries) {
+  if (!entries.length || !P) return;
   let insertAt = P.clips.length;
   if (P.clips.length) { const cur = (sel && sel.kind === 'clip') ? getSel() : locate(t).c; insertAt = P.clips.indexOf(cur) + 1; }
-  let added = 0, firstNew = null;
-  for (const f of files) {
-    const kind = f.type.startsWith('image') ? 'image' : 'video';
-    const m = await addMedia(f, kind, null, f.name);
-    if (!m) { toast(`No se pudo abrir ${f.name}. Prueba con MP4, MOV, JPG o PNG.`); continue; }
-    dbPut('media', { id: m.id, projectId: P.id, kind, blob: f, name: f.name }).then(r => { if (r === null && !warnedSpace) { warnedSpace = true; toast('No hay espacio para guardar este archivo en el dispositivo'); } });
-    const c = { id: uid(), mediaId: m.id, in: 0, out: kind === 'image' ? 0 : m.duration, dur: 3, speed: 1, volume: 1, filter: 'original', fit: 'contain', trans: 'none' };
+  let added = 0, firstNew = null, i = 0;
+  for (const en of entries) {
+    i++; toast(entries.length > 1 ? `Importando ${i} de ${entries.length}…` : 'Importando…');
+    const m = await addMedia(en.blob, en.kind, null, en.name);
+    if (!m) { toast(`No se pudo abrir ${en.name}. Prueba con MP4, MOV, JPG o PNG.`); continue; }
+    dbPut('media', { id: m.id, projectId: P.id, kind: en.kind, blob: en.blob, name: en.name }).then(r => { if (r === null && !warnedSpace) { warnedSpace = true; toast('No hay espacio para guardar este archivo en el dispositivo'); } });
+    const c = { id: uid(), mediaId: m.id, in: 0, out: en.kind === 'image' ? 0 : m.duration, dur: 3, speed: 1, volume: 1, filter: 'original', fit: 'contain', trans: 'none' };
     P.clips.splice(insertAt++, 0, c); added++; if (!firstNew) firstNew = c;
   }
   if (added) { t = clipStartOf(firstNew) + .001; commit(); select(null); syncMedia(); fitCanvas(); toast(added > 1 ? `${added} clips agregados` : 'Clip agregado'); }
-});
-fileAudio.addEventListener('change', async () => {
-  const f = fileAudio.files[0]; if (!f || !P) return;
+}
+async function importAudio(en) {
+  if (!en || !P) return;
   toast('Importando audio…');
-  const m = await addMedia(f, 'audio', null, f.name);
-  if (!m) return toast(`No se pudo abrir ${f.name}. Prueba con MP3 o M4A.`);
-  dbPut('media', { id: m.id, projectId: P.id, kind: 'audio', blob: f, name: f.name });
+  const m = await addMedia(en.blob, 'audio', null, en.name);
+  if (!m) return toast(`No se pudo abrir ${en.name}. Prueba con MP3 o M4A.`);
+  dbPut('media', { id: m.id, projectId: P.id, kind: 'audio', blob: en.blob, name: en.name });
   const start = t >= total() - .05 ? 0 : t;
   const a = { id: uid(), mediaId: m.id, start, in: 0, out: m.duration, volume: 1 };
   P.audios.push(a); commit(); select({ kind: 'audio', id: a.id }); toast('Audio agregado');
+}
+fileMedia.addEventListener('change', () => {
+  const files = [...fileMedia.files]; if (!files.length) return;
+  if (!P) { if (!newPending) return; newPending = false; createProject(); }
+  importVisual(files.map(f => ({ blob: f, name: f.name, kind: f.type.startsWith('image') ? 'image' : 'video' })));
 });
+fileAudio.addEventListener('change', () => {
+  const f = fileAudio.files[0]; if (!f || !P) return;
+  importAudio({ blob: f, name: f.name, kind: 'audio' });
+});
+
+/* ---------- Galería integrada (app Android) ---------- */
+const NA = window.NexoraAndroid;
+const HAS_GALLERY = !!(NA && typeof NA.listMedia === 'function');
+const gEl = $('#gallery'), gBody = $('#gBody'), gGrid = $('#gGrid');
+const gal = { mode: 'visual', kind: 'video', items: {}, album: '', q: '', sel: [], list: [], shown: 0, onDone: null, perm: '' };
+let gPreview = null, gPreviewId = null;
+const fmtMs = ms => fmt(Math.round((ms || 0) / 1000));
+const gKey = (k, id) => k + ':' + id;
+
+function openGallery(mode, onDone) {
+  if (!HAS_GALLERY) { systemPick(mode); return; }
+  gal.mode = mode; gal.onDone = onDone; gal.sel = []; gal.items = {}; gal.album = ''; gal.q = ''; gal.perm = '';
+  gal.kind = mode === 'audio' ? 'audio' : 'video';
+  $('#gSearch').value = '';
+  gEl.dataset.mode = mode; gEl.hidden = false;
+  document.querySelectorAll('[data-gk]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.gk === gal.kind)));
+  updGalleryBar();
+  loadGallery();
+}
+function closeGallery() {
+  gEl.hidden = true; gal.onDone = null; gGrid.innerHTML = '';
+  if (gPreview) { gPreview.pause(); gPreview.removeAttribute('src'); gPreview.load(); }
+  gPreviewId = null;
+}
+function systemPick(mode) {
+  // Respaldo: selector de archivos del sistema
+  if (mode === 'audio') { fileAudio.value = ''; fileAudio.click(); return; }
+  if (!P) newPending = true;
+  fileMedia.value = ''; fileMedia.click();
+}
+function gPerm() { try { return NA.mediaPermission(gal.kind) || 'granted'; } catch (e) { return 'granted'; } }
+function loadGallery(force) {
+  const st = gPerm();
+  gal.perm = st;
+  $('#gPartial').hidden = st !== 'partial';
+  if (st === 'denied') { renderPermMsg(false); return; }
+  if (force || !gal.items[gal.kind]) {
+    try { gal.items[gal.kind] = JSON.parse(NA.listMedia(gal.kind) || '[]'); } catch (e) { gal.items[gal.kind] = []; }
+  }
+  renderAlbums(); renderGrid();
+}
+function renderPermMsg(askedBefore) {
+  const what = gal.kind === 'audio' ? 'tu música y audios' : 'tus videos y fotos';
+  gGrid.className = '';
+  $('#gAlbum').innerHTML = '';
+  gGrid.innerHTML = `<div class="g-msg"><b>Permite el acceso a ${what}</b>Así puedes elegirlos aquí mismo, sin salir del editor.<div class="btns"><button class="btn primary" id="gAsk">Permitir acceso</button>${askedBefore ? '<button class="btn soft" id="gSet">Abrir ajustes</button>' : ''}<button class="link" id="gSys">Usar el selector del sistema</button></div></div>`;
+  $('#gAsk').onclick = () => NA.requestMedia(gal.kind);
+  if ($('#gSet')) $('#gSet').onclick = () => NA.openSettings();
+  $('#gSys').onclick = () => { const m = gal.mode; closeGallery(); systemPick(m); };
+}
+// Android avisa aquí después de pedir permisos o al volver a la app
+window.nexoraPermResult = st => {
+  if (gEl.hidden) return;
+  const now = gPerm();
+  if (now === 'denied') {
+    if (st !== 'refresh' || gal.perm !== 'denied') { gal.perm = now; renderPermMsg(st !== 'refresh'); }
+    return;
+  }
+  if (now !== gal.perm || st !== 'refresh') loadGallery(true);
+};
+function renderAlbums() {
+  if (gal.mode === 'audio') return;
+  const items = gal.items[gal.kind] || [], counts = new Map();
+  for (const it of items) { const b = it.bucket || 'Otros'; counts.set(b, (counts.get(b) || 0) + 1); }
+  const albums = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  if (gal.album && !counts.has(gal.album)) gal.album = '';
+  $('#gAlbum').innerHTML = `<option value="">Recientes (${items.length})</option>` + albums.map(([b, n]) => `<option value="${esc(b)}"${b === gal.album ? ' selected' : ''}>${esc(b)} (${n})</option>`).join('');
+}
+function gFiltered() {
+  let l = gal.items[gal.kind] || [];
+  if (gal.album) l = l.filter(it => (it.bucket || 'Otros') === gal.album);
+  if (gal.q) { const q = gal.q.toLowerCase(); l = l.filter(it => (it.name || '').toLowerCase().includes(q)); }
+  return l;
+}
+function renderGrid() {
+  gal.list = gFiltered(); gal.shown = 0;
+  gGrid.className = gal.mode === 'audio' ? 'g-list' : 'g-grid';
+  gGrid.innerHTML = '';
+  gBody.scrollTop = 0;
+  if (!gal.list.length) {
+    gGrid.className = '';
+    const msg = gal.q ? 'No hay audios con ese nombre.' : gal.kind === 'audio' ? 'No hay música ni audios en tu teléfono.' : gal.kind === 'image' ? 'No hay fotos aquí.' : 'No hay videos aquí.';
+    gGrid.innerHTML = `<div class="g-msg">${msg}<div class="btns"><button class="link" id="gSys2">Buscar en otra app</button></div></div>`;
+    $('#gSys2').onclick = () => { const m = gal.mode; closeGallery(); systemPick(m); };
+    return;
+  }
+  appendMore();
+}
+function appendMore() {
+  const next = gal.list.slice(gal.shown, gal.shown + 120); if (!next.length) return;
+  const k = gal.kind;
+  let h = '';
+  if (gal.mode === 'audio') {
+    for (const it of next) h += `<div class="g-row"><button class="g-prev" data-prev="${it.id}" aria-label="Escuchar">${ic(String(gPreviewId) === String(it.id) ? 'pause' : 'play')}</button><div class="g-meta"><b>${esc((it.name || 'Audio').replace(/\.[^.]+$/, ''))}</b><small>${fmtMs(it.dur)}</small></div><button class="g-use" data-use="${it.id}">Agregar</button></div>`;
+  } else {
+    for (const it of next) {
+      const n = gal.sel.findIndex(x => x.key === gKey(k, it.id)) + 1;
+      h += `<button class="g-tile${n ? ' on' : ''}" data-id="${it.id}" aria-label="${esc(it.name || '')}" aria-pressed="${n > 0}"><img loading="lazy" decoding="async" alt="" src="/media/thumb/${k}/${it.id}"><span class="g-dur">${k === 'video' ? fmtMs(it.dur) : ''}</span><span class="g-chk">${n || ''}</span></button>`;
+    }
+  }
+  gGrid.insertAdjacentHTML('beforeend', h);
+  gal.shown += next.length;
+}
+gBody.addEventListener('scroll', () => { if (gBody.scrollTop + gBody.clientHeight > gBody.scrollHeight - 700) appendMore(); }, { passive: true });
+function refreshTileMarks() {
+  const k = gal.kind;
+  gGrid.querySelectorAll('.g-tile').forEach(el => {
+    const n = gal.sel.findIndex(x => x.key === gKey(k, el.dataset.id)) + 1;
+    el.classList.toggle('on', n > 0); el.setAttribute('aria-pressed', String(n > 0));
+    el.querySelector('.g-chk').textContent = n || '';
+  });
+}
+function updGalleryBar() {
+  const n = gal.sel.length, b = $('#gAdd');
+  b.disabled = !n; b.textContent = n ? `Agregar (${n})` : 'Agregar';
+  $('#gCount').textContent = n ? (n === 1 ? '1 seleccionado' : `${n} seleccionados`) : 'Toca para elegir';
+}
+function markPreview() { gGrid.querySelectorAll('[data-prev]').forEach(b => { b.innerHTML = ic(b.dataset.prev === String(gPreviewId) ? 'pause' : 'play'); }); }
+gGrid.addEventListener('click', e => {
+  const tile = e.target.closest('.g-tile');
+  if (tile) {
+    const id = tile.dataset.id, key = gKey(gal.kind, id);
+    const i = gal.sel.findIndex(x => x.key === key);
+    if (i >= 0) gal.sel.splice(i, 1);
+    else { const it = (gal.items[gal.kind] || []).find(x => String(x.id) === id); if (it) gal.sel.push({ key, k: gal.kind, id: it.id, name: it.name, mime: it.mime }); }
+    refreshTileMarks(); updGalleryBar(); return;
+  }
+  const pv = e.target.closest('[data-prev]');
+  if (pv) {
+    const id = pv.dataset.prev;
+    if (!gPreview) { gPreview = new Audio(); gPreview.addEventListener('ended', () => { gPreviewId = null; markPreview(); }); }
+    if (String(gPreviewId) === id) { gPreview.pause(); gPreviewId = null; }
+    else { gPreview.src = `/media/file/audio/${id}`; const p = gPreview.play(); if (p) p.catch(() => {}); gPreviewId = id; }
+    markPreview(); return;
+  }
+  const use = e.target.closest('[data-use]');
+  if (use) {
+    const it = (gal.items.audio || []).find(x => String(x.id) === use.dataset.use); if (!it) return;
+    const done = gal.onDone; closeGallery(); if (done) done([{ k: 'audio', id: it.id, name: it.name, mime: it.mime }]);
+  }
+});
+document.querySelectorAll('[data-gk]').forEach(b => b.addEventListener('click', () => {
+  if (gal.kind === b.dataset.gk) return;
+  gal.kind = b.dataset.gk; gal.album = '';
+  document.querySelectorAll('[data-gk]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+  loadGallery();
+}));
+$('#gAlbum').addEventListener('change', e => { gal.album = e.target.value; renderGrid(); });
+let gSearchTimer;
+$('#gSearch').addEventListener('input', e => { clearTimeout(gSearchTimer); gSearchTimer = setTimeout(() => { gal.q = e.target.value.trim(); renderGrid(); }, 180); });
+$('#gMoreAccess').onclick = () => NA.requestMedia(gal.kind);
+$('#gClose').onclick = () => closeGallery();
+$('#gAdd').onclick = () => { const s = gal.sel.slice(), done = gal.onDone; closeGallery(); if (done && s.length) done(s); };
+async function fetchGalleryItems(list) {
+  const out = []; let i = 0;
+  for (const it of list) {
+    i++; toast(list.length > 1 ? `Cargando ${i} de ${list.length}…` : 'Cargando…');
+    try {
+      const r = await fetch(`/media/file/${it.k}/${it.id}`); if (!r.ok) throw 0;
+      const b = await r.blob(); if (!b.size) throw 0;
+      const name = it.name || `archivo-${it.id}`;
+      out.push({ blob: new File([b], name, { type: it.mime || b.type }), name, kind: it.k });
+    } catch (e) { toast(`No se pudo abrir ${it.name || 'el archivo'}`); }
+  }
+  return out;
+}
 
 /* ---------- Exportar ---------- */
 let rec = null, chunks = [], recMime = '', canceled = false, resultURL = null, downloadsNS = null;
@@ -1126,12 +1359,13 @@ async function androidSave(blob, fname, btn) {
       btn.textContent = 'Guardando… ' + Math.round(Math.min(1, (o + CH) / blob.size) * 100) + '%';
     }
     if (!A.finish()) throw 0;
-    toast('Guardado en Películas › Animes Nexora');
+    toast('Guardado en Películas › Nexora');
   } catch (e) { toast('No se pudo guardar el video. Revisa el espacio del teléfono.'); }
   btn.innerHTML = label; btn.disabled = false;
 }
 window.nexoraBack = () => {
   if (exporting) return true;
+  if (!gEl.hidden) { closeGallery(); return true; }
   if (!$('#overlay').hidden) { $('#overlay').hidden = true; return true; }
   if (curSheet) { closeSheet(); return true; }
   if (P && sel) { select(null); return true; }
@@ -1171,12 +1405,18 @@ function enterEditor() {
   hist = [snap()]; hi = 0; sel = null; t = 0;
   updUndo(); requestAnimationFrame(() => { fitCanvas(); renderTimeline(); renderTools(); syncMedia(); dirty = true; });
 }
-$('#btnNew').onclick = () => {
-  ensureAudio(); clearMedia();
-  const name = 'Proyecto ' + new Date().toLocaleDateString('es', { day: 'numeric', month: 'short' }) + ' ' + new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+function createProject() {
+  clearMedia();
+  const now = new Date();
+  const name = 'Proyecto ' + now.toLocaleDateString('es', { day: 'numeric', month: 'short' }) + ' ' + now.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
   P = { id: uid(), name, aspect: homeAspect, bg: { type: 'blur', color: '#000000' }, clips: [], texts: [], audios: [], created: Date.now() };
   enterEditor(); saveNow();
-  fileMedia.value = ''; fileMedia.click();
+}
+$('#btnNew').onclick = () => {
+  ensureAudio();
+  if (HAS_GALLERY) {
+    openGallery('visual', async list => { createProject(); const e = await fetchGalleryItems(list); await importVisual(e); });
+  } else { newPending = true; fileMedia.value = ''; fileMedia.click(); }
 };
 async function openProject(id) {
   ensureAudio();
@@ -1197,7 +1437,7 @@ $('#projName').addEventListener('change', e => { if (!P) return; P.name = e.targ
 $('#projName').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
 
 /* ---------- Controles ---------- */
-$('#btnClose').innerHTML = ic('x'); $('#btnPlay').innerHTML = ic('play'); $('#btnUndo').innerHTML = ic('undo'); $('#btnRedo').innerHTML = ic('redo');
+$('#btnClose').innerHTML = ic('x'); $('#gClose').innerHTML = ic('x'); $('#btnPlay').innerHTML = ic('play'); $('#btnUndo').innerHTML = ic('undo'); $('#btnRedo').innerHTML = ic('redo');
 $('#btnAddClip').innerHTML = ic('plus'); $('#zIn').innerHTML = ic('zin'); $('#zOut').innerHTML = ic('zout'); $('#shDone').innerHTML = ic('check');
 $('#btnEmptyAdd').innerHTML = ic('plus') + 'Agregar videos o fotos';
 $('#btnEmptyAdd').onclick = pickMedia; $('#btnAddClip').onclick = pickMedia;
