@@ -1,0 +1,356 @@
+name: Construir APK
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Crear proyecto Android
+        run: |
+          set -e
+          mkdir -p android/app/src/main/assets android/app/src/main/res/values android/app/src/main/res/drawable android/app/src/main/res/mipmap-anydpi-v26 android/app/src/main/java/com/nexora/animes
+          cat > android/settings.gradle.kts <<'NEXORA_EOF'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          rootProject.name = "AnimesNexora"
+          include(":app")
+          NEXORA_EOF
+          cat > android/build.gradle.kts <<'NEXORA_EOF'
+          plugins { id("com.android.application") version "8.5.2" apply false }
+          NEXORA_EOF
+          cat > android/gradle.properties <<'NEXORA_EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          NEXORA_EOF
+          cat > android/app/build.gradle.kts <<'NEXORA_EOF'
+          plugins { id("com.android.application") }
+          android {
+              namespace = "com.nexora.animes"
+              compileSdk = 34
+              defaultConfig {
+                  applicationId = "com.nexora.animes"
+                  minSdk = 26
+                  targetSdk = 34
+                  versionCode = 1
+                  versionName = "1.0"
+              }
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+          }
+          dependencies { implementation("androidx.webkit:webkit:1.11.0") }
+          NEXORA_EOF
+          cat > android/app/src/main/AndroidManifest.xml <<'NEXORA_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+              <application
+                  android:label="Animes Nexora"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher"
+                  android:theme="@style/AppTheme"
+                  android:hardwareAccelerated="true">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode"
+                      android:windowSoftInputMode="adjustResize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          NEXORA_EOF
+          cat > android/app/src/main/res/values/styles.xml <<'NEXORA_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+                  <item name="android:windowBackground">@color/fondo</item>
+                  <item name="android:statusBarColor">@color/fondo</item>
+                  <item name="android:navigationBarColor">@color/fondo</item>
+              </style>
+              <color name="fondo">#FF120F24</color>
+          </resources>
+          NEXORA_EOF
+          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml <<'NEXORA_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@drawable/ic_bg" />
+              <foreground android:drawable="@drawable/ic_fg" />
+          </adaptive-icon>
+          NEXORA_EOF
+          cat > android/app/src/main/res/drawable/ic_bg.xml <<'NEXORA_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:aapt="http://schemas.android.com/aapt"
+              android:width="108dp" android:height="108dp"
+              android:viewportWidth="108" android:viewportHeight="108">
+              <path android:pathData="M0,0h108v108h-108z">
+                  <aapt:attr name="android:fillColor">
+                      <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="108" android:endY="108">
+                          <item android:offset="0" android:color="#FFFF4FA3" />
+                          <item android:offset="0.55" android:color="#FF9B5CF6" />
+                          <item android:offset="1" android:color="#FF47E5FF" />
+                      </gradient>
+                  </aapt:attr>
+              </path>
+          </vector>
+          NEXORA_EOF
+          cat > android/app/src/main/res/drawable/ic_fg.xml <<'NEXORA_EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="108dp" android:height="108dp"
+              android:viewportWidth="108" android:viewportHeight="108">
+              <path android:fillColor="#FFFFFFFF"
+                  android:pathData="M54,30 C56.6,44 64,51.4 78,54 C64,56.6 56.6,64 54,78 C51.4,64 44,56.6 30,54 C44,51.4 51.4,44 54,30 Z" />
+              <path android:fillColor="#D9FFFFFF"
+                  android:pathData="M72,34 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+          </vector>
+          NEXORA_EOF
+          cat > android/app/src/main/java/com/nexora/animes/MainActivity.java <<'NEXORA_EOF'
+          package com.nexora.animes;
+
+          import android.Manifest;
+          import android.app.Activity;
+          import android.content.ContentValues;
+          import android.content.Intent;
+          import android.content.pm.PackageManager;
+          import android.media.MediaScannerConnection;
+          import android.net.Uri;
+          import android.os.Build;
+          import android.os.Bundle;
+          import android.os.Environment;
+          import android.provider.MediaStore;
+          import android.util.Base64;
+          import android.view.WindowManager;
+          import android.webkit.JavascriptInterface;
+          import android.webkit.ValueCallback;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebResourceResponse;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          import androidx.webkit.WebViewAssetLoader;
+
+          import java.io.File;
+          import java.io.FileOutputStream;
+          import java.io.OutputStream;
+          import java.util.ArrayList;
+          import java.util.List;
+
+          public class MainActivity extends Activity {
+              private static final int REQ_FILE = 1;
+              private static final String START_URL = "https://appassets.androidplatform.net/assets/index.html";
+
+              private WebView web;
+              private ValueCallback<Uri[]> fileCallback;
+              private OutputStream saveOut;
+              private Uri saveUri;
+              private File legacyFile;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+                  web = new WebView(this);
+                  setContentView(web);
+
+                  final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
+                          .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                          .build();
+
+                  WebSettings s = web.getSettings();
+                  s.setJavaScriptEnabled(true);
+                  s.setDomStorageEnabled(true);
+                  s.setDatabaseEnabled(true);
+                  s.setMediaPlaybackRequiresUserGesture(false);
+                  s.setAllowFileAccess(false);
+                  s.setAllowContentAccess(true);
+
+                  web.setWebViewClient(new WebViewClient() {
+                      @Override
+                      public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                          return loader.shouldInterceptRequest(request.getUrl());
+                      }
+                  });
+
+                  web.setWebChromeClient(new WebChromeClient() {
+                      @Override
+                      public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
+                          if (fileCallback != null) fileCallback.onReceiveValue(null);
+                          fileCallback = callback;
+
+                          List<String> types = new ArrayList<>();
+                          String[] accept = params.getAcceptTypes();
+                          if (accept != null) {
+                              for (String a : accept) {
+                                  if (a == null) continue;
+                                  for (String part : a.split(",")) {
+                                      String p = part.trim();
+                                      if (!p.isEmpty()) types.add(p);
+                                  }
+                              }
+                          }
+                          Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                          i.addCategory(Intent.CATEGORY_OPENABLE);
+                          if (types.size() == 1) {
+                              i.setType(types.get(0));
+                          } else {
+                              i.setType("*/*");
+                              if (!types.isEmpty()) i.putExtra(Intent.EXTRA_MIME_TYPES, types.toArray(new String[0]));
+                          }
+                          if (params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
+                              i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                          }
+                          try {
+                              startActivityForResult(Intent.createChooser(i, "Elegir archivos"), REQ_FILE);
+                          } catch (Exception e) {
+                              fileCallback = null;
+                              return false;
+                          }
+                          return true;
+                      }
+                  });
+
+                  web.addJavascriptInterface(new Bridge(), "NexoraAndroid");
+
+                  if (Build.VERSION.SDK_INT < 29 &&
+                          checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                      requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+                  }
+
+                  if (savedInstanceState == null) web.loadUrl(START_URL);
+                  else web.restoreState(savedInstanceState);
+              }
+
+              @Override
+              protected void onSaveInstanceState(Bundle outState) {
+                  super.onSaveInstanceState(outState);
+                  web.saveState(outState);
+              }
+
+              @Override
+              protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+                  super.onActivityResult(requestCode, resultCode, data);
+                  if (requestCode != REQ_FILE || fileCallback == null) return;
+                  Uri[] result = null;
+                  if (resultCode == RESULT_OK && data != null) {
+                      if (data.getClipData() != null) {
+                          int n = data.getClipData().getItemCount();
+                          result = new Uri[n];
+                          for (int k = 0; k < n; k++) result[k] = data.getClipData().getItemAt(k).getUri();
+                      } else if (data.getData() != null) {
+                          result = new Uri[]{data.getData()};
+                      }
+                  }
+                  fileCallback.onReceiveValue(result);
+                  fileCallback = null;
+              }
+
+              @Override
+              @SuppressWarnings("deprecation")
+              public void onBackPressed() {
+                  web.evaluateJavascript("(window.nexoraBack && window.nexoraBack()) ? 'true' : 'false'", value -> {
+                      if (value == null || !value.contains("true")) MainActivity.super.onBackPressed();
+                  });
+              }
+
+              /** Puente para guardar el video exportado en Películas/Animes Nexora */
+              private class Bridge {
+                  @JavascriptInterface
+                  public boolean begin(String name, String mime) {
+                      try {
+                          closeQuietly();
+                          if (Build.VERSION.SDK_INT >= 29) {
+                              ContentValues cv = new ContentValues();
+                              cv.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
+                              cv.put(MediaStore.MediaColumns.MIME_TYPE, mime);
+                              cv.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/Animes Nexora");
+                              cv.put(MediaStore.MediaColumns.IS_PENDING, 1);
+                              saveUri = getContentResolver().insert(
+                                      MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), cv);
+                              if (saveUri == null) return false;
+                              saveOut = getContentResolver().openOutputStream(saveUri);
+                          } else {
+                              File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Animes Nexora");
+                              if (!dir.exists()) dir.mkdirs();
+                              legacyFile = new File(dir, name);
+                              saveOut = new FileOutputStream(legacyFile);
+                          }
+                          return saveOut != null;
+                      } catch (Exception e) {
+                          return false;
+                      }
+                  }
+
+                  @JavascriptInterface
+                  public boolean append(String base64) {
+                      try {
+                          if (saveOut == null) return false;
+                          saveOut.write(Base64.decode(base64, Base64.DEFAULT));
+                          return true;
+                      } catch (Exception e) {
+                          return false;
+                      }
+                  }
+
+                  @JavascriptInterface
+                  public boolean finish() {
+                      try {
+                          if (saveOut == null) return false;
+                          saveOut.flush();
+                          saveOut.close();
+                          saveOut = null;
+                          if (Build.VERSION.SDK_INT >= 29) {
+                              ContentValues cv = new ContentValues();
+                              cv.put(MediaStore.MediaColumns.IS_PENDING, 0);
+                              getContentResolver().update(saveUri, cv, null, null);
+                          } else if (legacyFile != null) {
+                              MediaScannerConnection.scanFile(MainActivity.this, new String[]{legacyFile.getAbsolutePath()}, null, null);
+                          }
+                          return true;
+                      } catch (Exception e) {
+                          return false;
+                      }
+                  }
+
+                  private void closeQuietly() {
+                      try { if (saveOut != null) saveOut.close(); } catch (Exception ignored) { }
+                      saveOut = null;
+                  }
+              }
+          }
+          NEXORA_EOF
+          cp Editor.html android/app/src/main/assets/index.html
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Compilar APK
+        working-directory: android
+        run: gradle assembleDebug --no-daemon
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk AnimesNexora.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AnimesNexora-apk
+          path: AnimesNexora.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Animes Nexora v1.0.${{ github.run_number }}
+          files: AnimesNexora.apk
