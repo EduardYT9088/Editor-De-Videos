@@ -51,8 +51,13 @@ jobs:
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-permission android:name="android.permission.INTERNET" />
               <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+              <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+              <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+              <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
               <application
-                  android:label="Animes Nexora"
+                  android:label="Editor de Video Nexora"
                   android:icon="@mipmap/ic_launcher"
                   android:roundIcon="@mipmap/ic_launcher"
                   android:theme="@style/AppTheme"
@@ -121,16 +126,22 @@ jobs:
 
           import android.Manifest;
           import android.app.Activity;
+          import android.content.ContentUris;
           import android.content.ContentValues;
           import android.content.Intent;
           import android.content.pm.PackageManager;
+          import android.database.Cursor;
+          import android.graphics.Bitmap;
           import android.media.MediaScannerConnection;
           import android.net.Uri;
           import android.os.Build;
           import android.os.Bundle;
           import android.os.Environment;
+          import android.provider.BaseColumns;
           import android.provider.MediaStore;
+          import android.provider.Settings;
           import android.util.Base64;
+          import android.util.Size;
           import android.view.WindowManager;
           import android.webkit.JavascriptInterface;
           import android.webkit.ValueCallback;
@@ -143,21 +154,37 @@ jobs:
 
           import androidx.webkit.WebViewAssetLoader;
 
+          import org.json.JSONArray;
+          import org.json.JSONObject;
+
+          import java.io.ByteArrayInputStream;
+          import java.io.ByteArrayOutputStream;
           import java.io.File;
           import java.io.FileOutputStream;
+          import java.io.InputStream;
           import java.io.OutputStream;
           import java.util.ArrayList;
+          import java.util.HashMap;
           import java.util.List;
+          import java.util.Map;
 
           public class MainActivity extends Activity {
               private static final int REQ_FILE = 1;
-              private static final String START_URL = "https://appassets.androidplatform.net/assets/index.html";
+              private static final int REQ_MEDIA = 3;
+              private static final String HOST = "appassets.androidplatform.net";
+              private static final String START_URL = "https://" + HOST + "/assets/index.html";
+
+              private static final String P_VIDEO = "android.permission.READ_MEDIA_VIDEO";
+              private static final String P_IMAGES = "android.permission.READ_MEDIA_IMAGES";
+              private static final String P_AUDIO = "android.permission.READ_MEDIA_AUDIO";
+              private static final String P_SELECTED = "android.permission.READ_MEDIA_VISUAL_USER_SELECTED";
 
               private WebView web;
               private ValueCallback<Uri[]> fileCallback;
               private OutputStream saveOut;
               private Uri saveUri;
               private File legacyFile;
+              private String pendingPermKind = "video";
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +209,10 @@ jobs:
                   web.setWebViewClient(new WebViewClient() {
                       @Override
                       public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                          return loader.shouldInterceptRequest(request.getUrl());
+                          Uri u = request.getUrl();
+                          String path = u.getPath();
+                          if (HOST.equals(u.getHost()) && path != null && path.startsWith("/media/")) return serveMedia(u);
+                          return loader.shouldInterceptRequest(u);
                       }
                   });
 
@@ -191,7 +221,6 @@ jobs:
                       public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                           if (fileCallback != null) fileCallback.onReceiveValue(null);
                           fileCallback = callback;
-
                           List<String> types = new ArrayList<>();
                           String[] accept = params.getAcceptTypes();
                           if (accept != null) {
@@ -226,13 +255,14 @@ jobs:
 
                   web.addJavascriptInterface(new Bridge(), "NexoraAndroid");
 
-                  if (Build.VERSION.SDK_INT < 29 &&
-                          checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                      requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
-                  }
-
                   if (savedInstanceState == null) web.loadUrl(START_URL);
                   else web.restoreState(savedInstanceState);
+              }
+
+              @Override
+              protected void onResume() {
+                  super.onResume();
+                  if (web != null) web.evaluateJavascript("window.nexoraPermResult && window.nexoraPermResult('refresh')", null);
               }
 
               @Override
@@ -260,6 +290,15 @@ jobs:
               }
 
               @Override
+              public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+                  super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                  if (requestCode == REQ_MEDIA) {
+                      String st = permState(pendingPermKind);
+                      web.evaluateJavascript("window.nexoraPermResult && window.nexoraPermResult('" + st + "')", null);
+                  }
+              }
+
+              @Override
               @SuppressWarnings("deprecation")
               public void onBackPressed() {
                   web.evaluateJavascript("(window.nexoraBack && window.nexoraBack()) ? 'true' : 'false'", value -> {
@@ -267,8 +306,131 @@ jobs:
                   });
               }
 
-              /** Puente para guardar el video exportado en Películas/Animes Nexora */
+              /* ---------- Galería del teléfono ---------- */
+
+              private Uri collection(String kind) {
+                  if ("image".equals(kind)) return MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                  if ("audio".equals(kind)) return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                  return MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+              }
+
+              private boolean has(String p) {
+                  return checkSelfPermission(p) == PackageManager.PERMISSION_GRANTED;
+              }
+
+              private String permState(String kind) {
+                  boolean audio = "audio".equals(kind);
+                  if (Build.VERSION.SDK_INT >= 33) {
+                      if (audio) return has(P_AUDIO) ? "granted" : "denied";
+                      if (has(P_VIDEO) && has(P_IMAGES)) return "granted";
+                      if (Build.VERSION.SDK_INT >= 34 && has(P_SELECTED)) return "partial";
+                      return "denied";
+                  }
+                  return has(Manifest.permission.READ_EXTERNAL_STORAGE) ? "granted" : "denied";
+              }
+
+              private String[] mediaPerms(String kind) {
+                  boolean audio = "audio".equals(kind);
+                  if (Build.VERSION.SDK_INT >= 34 && !audio) return new String[]{P_VIDEO, P_IMAGES, P_SELECTED};
+                  if (Build.VERSION.SDK_INT >= 33) return audio ? new String[]{P_AUDIO} : new String[]{P_VIDEO, P_IMAGES};
+                  if (Build.VERSION.SDK_INT >= 29) return new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+                  return new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+              }
+
+              private String listMediaJson(String kind) {
+                  JSONArray arr = new JSONArray();
+                  boolean image = "image".equals(kind), audio = "audio".equals(kind);
+                  List<String> cols = new ArrayList<>();
+                  cols.add(BaseColumns._ID);
+                  cols.add(MediaStore.MediaColumns.DISPLAY_NAME);
+                  cols.add(MediaStore.MediaColumns.MIME_TYPE);
+                  cols.add(MediaStore.MediaColumns.DATE_ADDED);
+                  int durIdx = -1, bucketIdx = -1;
+                  if (!image) { durIdx = cols.size(); cols.add("duration"); }
+                  if (!audio) { bucketIdx = cols.size(); cols.add("bucket_display_name"); }
+                  try (Cursor c = getContentResolver().query(collection(kind), cols.toArray(new String[0]),
+                          null, null, MediaStore.MediaColumns.DATE_ADDED + " DESC")) {
+                      if (c != null) {
+                          while (c.moveToNext()) {
+                              long dur = durIdx >= 0 ? c.getLong(durIdx) : 0;
+                              if (audio && dur < 1000) continue;
+                              JSONObject o = new JSONObject();
+                              o.put("id", c.getLong(0));
+                              o.put("name", c.isNull(1) ? "" : c.getString(1));
+                              o.put("mime", c.isNull(2) ? "" : c.getString(2));
+                              if (durIdx >= 0) o.put("dur", dur);
+                              if (bucketIdx >= 0) o.put("bucket", c.isNull(bucketIdx) ? "" : c.getString(bucketIdx));
+                              arr.put(o);
+                              if (arr.length() >= 6000) break;
+                          }
+                      }
+                  } catch (Exception ignored) { }
+                  return arr.toString();
+              }
+
+              @SuppressWarnings("deprecation")
+              private WebResourceResponse serveMedia(Uri u) {
+                  try {
+                      List<String> seg = u.getPathSegments();
+                      if (seg.size() < 4) return notFound();
+                      String what = seg.get(1), kind = seg.get(2);
+                      long id = Long.parseLong(seg.get(3));
+                      Uri cu = ContentUris.withAppendedId(collection(kind), id);
+                      Map<String, String> h = new HashMap<>();
+                      h.put("Access-Control-Allow-Origin", "*");
+                      if ("thumb".equals(what)) {
+                          Bitmap bm;
+                          if (Build.VERSION.SDK_INT >= 29) {
+                              bm = getContentResolver().loadThumbnail(cu, new Size(256, 256), null);
+                          } else if ("video".equals(kind)) {
+                              bm = MediaStore.Video.Thumbnails.getThumbnail(getContentResolver(), id, MediaStore.Video.Thumbnails.MINI_KIND, null);
+                          } else {
+                              bm = MediaStore.Images.Thumbnails.getThumbnail(getContentResolver(), id, MediaStore.Images.Thumbnails.MINI_KIND, null);
+                          }
+                          if (bm == null) return notFound();
+                          ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                          bm.compress(Bitmap.CompressFormat.JPEG, 82, bos);
+                          h.put("Cache-Control", "max-age=86400");
+                          return new WebResourceResponse("image/jpeg", null, 200, "OK", h, new ByteArrayInputStream(bos.toByteArray()));
+                      }
+                      String mime = getContentResolver().getType(cu);
+                      if (mime == null) mime = "application/octet-stream";
+                      InputStream in = getContentResolver().openInputStream(cu);
+                      if (in == null) return notFound();
+                      return new WebResourceResponse(mime, null, 200, "OK", h, in);
+                  } catch (Exception e) {
+                      return notFound();
+                  }
+              }
+
+              private WebResourceResponse notFound() {
+                  return new WebResourceResponse("text/plain", "utf-8", 404, "Not Found",
+                          new HashMap<>(), new ByteArrayInputStream(new byte[0]));
+              }
+
+              /** Puente con la página: galería, permisos y guardado del video exportado */
               private class Bridge {
+                  @JavascriptInterface
+                  public String mediaPermission(String kind) { return permState(kind); }
+
+                  @JavascriptInterface
+                  public void requestMedia(String kind) {
+                      pendingPermKind = kind;
+                      runOnUiThread(() -> requestPermissions(mediaPerms(kind), REQ_MEDIA));
+                  }
+
+                  @JavascriptInterface
+                  public void openSettings() {
+                      runOnUiThread(() -> {
+                          Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                  Uri.fromParts("package", getPackageName(), null));
+                          startActivity(i);
+                      });
+                  }
+
+                  @JavascriptInterface
+                  public String listMedia(String kind) { return listMediaJson(kind); }
+
                   @JavascriptInterface
                   public boolean begin(String name, String mime) {
                       try {
@@ -277,14 +439,18 @@ jobs:
                               ContentValues cv = new ContentValues();
                               cv.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
                               cv.put(MediaStore.MediaColumns.MIME_TYPE, mime);
-                              cv.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/Animes Nexora");
+                              cv.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/Nexora");
                               cv.put(MediaStore.MediaColumns.IS_PENDING, 1);
                               saveUri = getContentResolver().insert(
                                       MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), cv);
                               if (saveUri == null) return false;
                               saveOut = getContentResolver().openOutputStream(saveUri);
                           } else {
-                              File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Animes Nexora");
+                              if (!has(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                  runOnUiThread(() -> requestPermissions(mediaPerms("video"), REQ_MEDIA));
+                                  return false;
+                              }
+                              File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Nexora");
                               if (!dir.exists()) dir.mkdirs();
                               legacyFile = new File(dir, name);
                               saveOut = new FileOutputStream(legacyFile);
@@ -344,13 +510,13 @@ jobs:
       - name: Compilar APK
         working-directory: android
         run: gradle assembleDebug --no-daemon
-      - run: cp android/app/build/outputs/apk/debug/app-debug.apk AnimesNexora.apk
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk EditorDeVideoNexora.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: AnimesNexora-apk
-          path: AnimesNexora.apk
+          name: EditorDeVideoNexora-apk
+          path: EditorDeVideoNexora.apk
       - uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Animes Nexora v1.0.${{ github.run_number }}
-          files: AnimesNexora.apk
+          tag_name: v1.1.${{ github.run_number }}
+          name: Editor de Video Nexora v1.1.${{ github.run_number }}
+          files: EditorDeVideoNexora.apk
