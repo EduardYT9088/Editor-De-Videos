@@ -56,6 +56,7 @@ jobs:
               <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
               <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
               <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+              <uses-permission android:name="android.permission.RECORD_AUDIO" />
               <application
                   android:label="Editor de Video Nexora"
                   android:icon="@mipmap/ic_launcher"
@@ -144,6 +145,7 @@ jobs:
           import android.util.Size;
           import android.view.WindowManager;
           import android.webkit.JavascriptInterface;
+          import android.webkit.PermissionRequest;
           import android.webkit.ValueCallback;
           import android.webkit.WebChromeClient;
           import android.webkit.WebResourceRequest;
@@ -171,6 +173,7 @@ jobs:
           public class MainActivity extends Activity {
               private static final int REQ_FILE = 1;
               private static final int REQ_MEDIA = 3;
+              private static final int REQ_MIC = 4;
               private static final String HOST = "appassets.androidplatform.net";
               private static final String START_URL = "https://" + HOST + "/assets/index.html";
 
@@ -185,6 +188,7 @@ jobs:
               private Uri saveUri;
               private File legacyFile;
               private String pendingPermKind = "video";
+              private PermissionRequest pendingMic;
 
               @Override
               protected void onCreate(Bundle savedInstanceState) {
@@ -217,6 +221,21 @@ jobs:
                   });
 
                   web.setWebChromeClient(new WebChromeClient() {
+                      @Override
+                      public void onPermissionRequest(final PermissionRequest request) {
+                          runOnUiThread(() -> {
+                              boolean wantsMic = false;
+                              for (String r : request.getResources()) if (PermissionRequest.RESOURCE_AUDIO_CAPTURE.equals(r)) wantsMic = true;
+                              if (!wantsMic) { request.deny(); return; }
+                              if (has(Manifest.permission.RECORD_AUDIO)) {
+                                  request.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
+                              } else {
+                                  pendingMic = request;
+                                  requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQ_MIC);
+                              }
+                          });
+                      }
+
                       @Override
                       public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                           if (fileCallback != null) fileCallback.onReceiveValue(null);
@@ -292,6 +311,16 @@ jobs:
               @Override
               public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
                   super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                  if (requestCode == REQ_MIC) {
+                      PermissionRequest pr = pendingMic;
+                      pendingMic = null;
+                      if (pr != null) {
+                          boolean ok = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                          if (ok) pr.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
+                          else pr.deny();
+                      }
+                      return;
+                  }
                   if (requestCode == REQ_MEDIA) {
                       String st = permState(pendingPermKind);
                       web.evaluateJavascript("window.nexoraPermResult && window.nexoraPermResult('" + st + "')", null);
