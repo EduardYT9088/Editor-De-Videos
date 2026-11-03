@@ -104,8 +104,24 @@ jobs:
                   <aapt:attr name="android:fillColor">
                       <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="108" android:endY="108">
                           <item android:offset="0" android:color="#FFFF4FA3" />
-                          <item android:offset="0.55" android:color="#FF9B5CF6" />
-                          <item android:offset="1" android:color="#FF47E5FF" />
+                          <item android:offset="0.52" android:color="#FF8B5CF6" />
+                          <item android:offset="1" android:color="#FF22D3EE" />
+                      </gradient>
+                  </aapt:attr>
+              </path>
+              <path android:pathData="M0,0h108v108h-108z">
+                  <aapt:attr name="android:fillColor">
+                      <gradient android:type="radial" android:centerX="27" android:centerY="16" android:gradientRadius="81">
+                          <item android:offset="0" android:color="#52FFFFFF" />
+                          <item android:offset="1" android:color="#00FFFFFF" />
+                      </gradient>
+                  </aapt:attr>
+              </path>
+              <path android:pathData="M0,0h108v108h-108z">
+                  <aapt:attr name="android:fillColor">
+                      <gradient android:type="linear" android:startX="0" android:startY="59" android:endX="0" android:endY="108">
+                          <item android:offset="0" android:color="#00120F24" />
+                          <item android:offset="1" android:color="#47120F24" />
                       </gradient>
                   </aapt:attr>
               </path>
@@ -114,12 +130,31 @@ jobs:
           cat > android/app/src/main/res/drawable/ic_fg.xml <<'NEXORA_EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:aapt="http://schemas.android.com/aapt"
               android:width="108dp" android:height="108dp"
               android:viewportWidth="108" android:viewportHeight="108">
-              <path android:fillColor="#FFFFFFFF"
-                  android:pathData="M54,30 C56.6,44 64,51.4 78,54 C64,56.6 56.6,64 54,78 C51.4,64 44,56.6 30,54 C44,51.4 51.4,44 54,30 Z" />
-              <path android:fillColor="#D9FFFFFF"
-                  android:pathData="M72,34 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0" />
+              <group android:scaleX="0.76" android:scaleY="0.76" android:pivotX="54" android:pivotY="54">
+                  <path android:fillColor="#FFFFFFFF" android:fillAlpha="0.5"
+                      android:pathData="M27,35h2a3,3 0,0 1,3,3v3a3,3 0,0 1,-3,3h-2a3,3 0,0 1,-3,-3v-3a3,3 0,0 1,3,-3z" />
+                  <path android:fillColor="#FFFFFFFF" android:fillAlpha="0.8"
+                      android:pathData="M27,49.5h2a3,3 0,0 1,3,3v3a3,3 0,0 1,-3,3h-2a3,3 0,0 1,-3,-3v-3a3,3 0,0 1,3,-3z" />
+                  <path android:fillColor="#FFFFFFFF" android:fillAlpha="0.5"
+                      android:pathData="M27,64h2a3,3 0,0 1,3,3v3a3,3 0,0 1,-3,3h-2a3,3 0,0 1,-3,-3v-3a3,3 0,0 1,3,-3z" />
+                  <path android:fillColor="#FFFFFFFF"
+                      android:pathData="M39,36 C39,30.5 43,28.6 47.6,31.3 L77.4,48.8 C82.2,51.6 82.2,56.4 77.4,59.2 L47.6,76.7 C43,79.4 39,77.5 39,72 Z" />
+                  <path android:pathData="M55,46 L63,54 L55,62 L47,54 Z">
+                      <aapt:attr name="android:fillColor">
+                          <gradient android:type="linear" android:startX="47" android:startY="46" android:endX="63" android:endY="62">
+                              <item android:offset="0" android:color="#FFFF4FA3" />
+                              <item android:offset="1" android:color="#FF8B5CF6" />
+                          </gradient>
+                      </aapt:attr>
+                  </path>
+                  <path android:fillColor="#FFFFFFFF"
+                      android:pathData="M81,17 C81.9,22.4 83.6,24.1 89,25 C83.6,25.9 81.9,27.6 81,33 C80.1,27.6 78.4,25.9 73,25 C78.4,24.1 80.1,22.4 81,17 Z" />
+                  <path android:fillColor="#FFFFFFFF" android:fillAlpha="0.8"
+                      android:pathData="M87.5,37a2,2 0,1 0,4,0a2,2 0,1 0,-4,0" />
+              </group>
           </vector>
           NEXORA_EOF
           cat > android/app/src/main/java/com/nexora/animes/MainActivity.java <<'NEXORA_EOF'

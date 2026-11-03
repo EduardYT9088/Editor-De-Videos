@@ -44,36 +44,78 @@ button:disabled{opacity:.35;cursor:default}
 #app{height:100%;position:relative}
 
 /* ---------- Inicio ---------- */
-.home{height:100%;overflow-y:auto;padding:18px 18px 48px;max-width:760px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:12px;margin:4px 0 22px}
-.brand h1{font-family:"Dela Gothic One","M PLUS Rounded 1c",sans-serif;font-weight:400;font-size:22px;margin:0;line-height:1.05}
-.brand p{margin:3px 0 0;font-size:12.5px;color:var(--muted);font-weight:500}
-.new{position:relative;overflow:hidden;width:100%;border-radius:24px;padding:22px 20px;color:#fff;text-align:left;
-  display:flex;align-items:center;gap:16px;
-  background:linear-gradient(125deg,#FF4FA3 0%,#9B5CF6 52%,#2FC9EA 100%);
-  box-shadow:0 14px 34px rgba(155,92,246,.32)}
-.new::after{content:"";position:absolute;right:-28px;top:50%;width:150px;height:150px;margin-top:-75px;background:rgba(255,255,255,.13);clip-path:polygon(28% 18%,28% 82%,82% 50%);pointer-events:none}
-.new .plus{flex:none;width:58px;height:58px;border-radius:18px;background:rgba(255,255,255,.22);display:grid;place-items:center}
-.new .plus svg{width:30px;height:30px}
-.new strong{display:block;font-size:20px;font-weight:800}
-.new span{display:block;font-size:13px;opacity:.92;margin-top:2px;max-width:30ch}
-.formats{display:flex;gap:8px;margin:14px 0 30px;overflow-x:auto;scrollbar-width:none}
+.home{height:100%;overflow-y:auto;overflow-x:hidden;position:relative;isolation:isolate}
+.home-in{max-width:760px;margin:0 auto;padding:16px 16px 40px;position:relative}
+.home-glow{position:absolute;left:0;right:0;top:0;height:460px;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 55% at 12% 0%,rgba(255,79,163,.20),transparent 70%),radial-gradient(55% 50% at 95% 12%,rgba(71,229,255,.16),transparent 70%),radial-gradient(70% 60% at 50% 40%,rgba(139,92,246,.14),transparent 70%)}
+.brand{display:flex;align-items:center;gap:12px;margin:6px 0 20px}
+.brand .logo{flex:none;width:52px;height:52px;border-radius:16px;box-shadow:0 8px 22px rgba(139,92,246,.38)}
+.brand .bt{flex:1;min-width:0}
+.brand h1{font-family:"Dela Gothic One","M PLUS Rounded 1c",sans-serif;font-weight:400;font-size:24px;margin:0;line-height:1.05;letter-spacing:.3px}
+.brand h1 em{font-style:normal;background:linear-gradient(90deg,#FF4FA3,#9B5CF6 55%,#22D3EE);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:500}
+.brand .iconbtn{background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.brand .iconbtn svg{width:19px;height:19px}
+
+.hero{position:relative;overflow:hidden;width:100%;border-radius:26px;padding:20px 18px 18px;color:#fff;text-align:left;display:block;
+  background:linear-gradient(130deg,#FF4FA3 0%,#9B5CF6 50%,#2FC9EA 100%);box-shadow:0 18px 40px rgba(155,92,246,.36),inset 0 1px 0 rgba(255,255,255,.35)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(80% 90% at 0% 0%,rgba(255,255,255,.28),transparent 60%);pointer-events:none}
+.hero:active{transform:scale(.985)}
+.hero .row1{position:relative;display:flex;align-items:center;gap:14px}
+.hero .plus{flex:none;width:56px;height:56px;border-radius:18px;background:rgba(255,255,255,.95);color:#8B5CF6;display:grid;place-items:center;box-shadow:0 8px 20px rgba(40,10,80,.25)}
+.hero .plus svg{width:28px;height:28px}
+.hero small{display:block;font-size:11.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;opacity:.85}
+.hero strong{display:block;font-size:22px;font-weight:800;line-height:1.15;margin-top:1px}
+.hero .fmt{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:12.5px;font-weight:700;background:rgba(18,15,36,.22);padding:4px 10px;border-radius:999px}
+.hero .fmt i{display:block;border:1.8px solid currentColor;border-radius:2.5px}
+.hero .strip{display:block;position:relative;margin-top:18px;height:46px;border-radius:12px;background:rgba(18,15,36,.22);overflow:hidden}
+.hero .strip b,.hero .strip .ph,.hero .strip .dk{display:block}
+.hero .strip b{position:absolute;top:6px;bottom:6px;border-radius:7px;background:rgba(255,255,255,.28)}
+.hero .strip b.c2{background:rgba(255,255,255,.42)}
+.hero .strip .ph{position:absolute;top:0;bottom:0;left:46%;width:2px;background:#fff;border-radius:2px;animation:phmove 4.5s ease-in-out infinite alternate}
+.hero .strip .ph::before{content:"";position:absolute;top:-1px;left:-4px;width:10px;height:10px;border-radius:50%;background:#fff}
+.hero .strip .dk{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;transform:rotate(45deg);background:#fff;border-radius:2px;box-shadow:0 0 0 1.5px rgba(18,15,36,.35)}
+@keyframes phmove{from{left:18%}to{left:82%}}
+@media (prefers-reduced-motion:reduce){.hero .strip .ph{animation:none}}
+
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:26px 2px 12px}
+.sec h2{font-size:16.5px;font-weight:800;margin:0}
+.sec span{font-size:12.5px;color:var(--muted);font-weight:600}
+.count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:var(--surface2);color:var(--text);font-size:12px;font-weight:800;margin-left:6px;vertical-align:2px}
+.formats{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px 4px;scroll-padding:16px}
 .formats::-webkit-scrollbar{display:none}
-.fchip{flex:none;padding:8px 12px;border-radius:12px;background:var(--surface);border:1.5px solid var(--line);font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.fchip i{display:block;border:2px solid currentColor;border-radius:3px}
-.fchip[aria-pressed="true"]{border-color:var(--pink);color:var(--pink)}
-.home h2{font-size:17px;font-weight:800;margin:0 0 12px}
-.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
-.proj{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.fcard{flex:none;width:86px;padding:12px 6px 10px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.fcard .fr{height:40px;display:grid;place-items:center}
+.fcard .fr i{display:block;border:2px solid currentColor;border-radius:4px;color:var(--muted)}
+.fcard b{font-size:13px;font-weight:800;line-height:1}
+.fcard small{font-size:10.5px;color:var(--muted);font-weight:600;line-height:1.2}
+.fcard[aria-pressed="true"]{border-color:var(--pink);background:color-mix(in srgb,var(--pink) 10%,var(--surface))}
+.fcard[aria-pressed="true"] .fr i{color:var(--pink);background:color-mix(in srgb,var(--pink) 18%,transparent)}
+
+.feats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.feat{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px 10px;border-radius:16px;background:var(--surface);border:1px solid var(--line);font-size:11.5px;font-weight:700;line-height:1.2;text-align:center}
+.feat .fi{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#fff}
+.feat .fi svg{width:21px;height:21px}
+.feat .new{position:absolute;top:-6px;right:-4px;font-size:9.5px;font-weight:800;letter-spacing:.3px;background:#FF4FA3;color:#fff;padding:2px 6px;border-radius:999px;box-shadow:0 3px 8px rgba(255,79,163,.4)}
+.feat:active{transform:scale(.96)}
+
+.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.proj{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 6px 18px rgba(10,8,22,.12)}
 .proj .open{display:block;width:100%;text-align:left}
-.proj .th{aspect-ratio:4/5;background:var(--stage) center/cover no-repeat}
-.proj .meta{padding:8px 10px 10px}
-.proj b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proj .th{position:relative;aspect-ratio:3/4;background:var(--stage) center/cover no-repeat}
+.proj .th::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,rgba(10,8,22,.65))}
+.proj .dur{position:absolute;left:8px;bottom:8px;z-index:1;font-size:11.5px;font-weight:800;color:#fff;background:rgba(10,8,22,.55);padding:3px 8px;border-radius:999px;font-variant-numeric:tabular-nums;backdrop-filter:blur(6px)}
+.proj .asp{position:absolute;right:8px;bottom:8px;z-index:1;font-size:10.5px;font-weight:800;color:#fff;background:rgba(255,255,255,.18);padding:3px 7px;border-radius:999px;backdrop-filter:blur(6px)}
+.proj .meta{padding:9px 11px 11px}
+.proj b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .proj small{font-size:11.5px;color:var(--muted)}
-.proj .del{position:absolute;top:6px;right:6px;height:30px;min-width:30px;padding:0 7px;border-radius:10px;background:rgba(10,8,22,.6);color:#fff;display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700}
+.proj .del{position:absolute;top:8px;right:8px;height:32px;min-width:32px;padding:0 8px;border-radius:11px;background:rgba(10,8,22,.55);color:#fff;display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:700;backdrop-filter:blur(6px)}
 .proj .del svg{width:16px;height:16px}
 .proj .del.confirm{background:var(--danger)}
-.empty{border:1.5px dashed var(--line);border-radius:18px;padding:26px 18px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6}
+.empty{border:1.5px dashed var(--line);border-radius:20px;padding:26px 18px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6;background:color-mix(in srgb,var(--surface) 55%,transparent)}
+.empty .ei{width:56px;height:56px;margin:0 auto 10px;border-radius:18px;display:grid;place-items:center;background:var(--surface2);color:var(--pink)}
+.empty .ei svg{width:28px;height:28px}
+.empty b{display:block;color:var(--text);font-size:15px}
 
 /* ---------- Editor ---------- */
 .editor{height:100%;display:flex;flex-direction:column;position:relative;background:var(--bg)}
@@ -113,6 +155,10 @@ button:disabled{opacity:.35;cursor:default}
 .clip .d{position:absolute;left:4px;bottom:3px;font-size:10px;font-weight:700;color:#fff;background:rgba(0,0,0,.6);padding:1px 5px;border-radius:6px}
 .clip .fx{position:absolute;right:4px;top:3px;color:#fff;background:rgba(0,0,0,.55);border-radius:6px;padding:2px;display:grid}
 .clip .fx svg{width:12px;height:12px}
+.kf{position:absolute;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;background:#fff;transform:rotate(45deg);border-radius:2.5px;box-shadow:0 0 0 1.5px rgba(10,8,22,.55),0 2px 6px rgba(0,0,0,.4);z-index:1;cursor:pointer}
+.kf::before{content:"";position:absolute;inset:-9px}
+.kf.on{background:var(--pink);box-shadow:0 0 0 2px #fff,0 2px 8px rgba(0,0,0,.45)}
+.kfbtn.on{color:var(--pink)}
 .trans{position:absolute;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:7px;background:var(--surface);color:var(--text);display:grid;place-items:center;z-index:2;border:1px solid var(--line)}
 .trans svg{width:12px;height:12px}
 .trans.on{background:var(--pink);color:#fff;border-color:var(--pink)}
@@ -197,6 +243,7 @@ textarea.txt{width:100%;min-height:78px;border-radius:14px;background:var(--surf
 .pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .pill{padding:10px 14px;border-radius:12px;background:var(--surface2);font-weight:700;font-size:13px;display:inline-flex;gap:6px;align-items:center}
 .pill svg{width:16px;height:16px}
+.hint svg{width:15px;height:15px;vertical-align:-3px;color:var(--pink)}
 .menu{display:grid;gap:8px;margin-top:6px}
 .menu-i{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:14px;border-radius:14px;background:var(--surface2)}
 .menu-i:disabled{opacity:.4;cursor:default}
@@ -300,28 +347,54 @@ textarea.txt{width:100%;min-height:78px;border-radius:14px;background:var(--surf
 
   <!-- Inicio -->
   <section class="home" id="home">
+    <div class="home-glow" aria-hidden="true"></div>
+    <div class="home-in">
     <header class="brand">
-      <svg width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
-        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4FA3"/><stop offset=".55" stop-color="#9B5CF6"/><stop offset="1" stop-color="#47E5FF"/></linearGradient></defs>
-        <rect width="46" height="46" rx="14" fill="url(#lg)"/>
-        <path d="M23 8c1.4 7.6 5.4 11.6 13 13-7.6 1.4-11.6 5.4-13 13-1.4-7.6-5.4-11.6-13-13 7.6-1.4 11.6-5.4 13-13z" fill="#fff"/>
-        <circle cx="35" cy="11" r="2.4" fill="#fff" opacity=".85"/>
+      <svg class="logo" viewBox="0 0 108 108" aria-hidden="true">
+        <defs>
+          <linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4FA3"/><stop offset=".52" stop-color="#8B5CF6"/><stop offset="1" stop-color="#22D3EE"/></linearGradient>
+          <radialGradient id="lgB" cx=".25" cy=".15" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          <linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4FA3"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+        </defs>
+        <rect width="108" height="108" rx="26" fill="url(#lgA)"/><rect width="108" height="108" rx="26" fill="url(#lgB)"/>
+        <rect x="24" y="35" width="8" height="9" rx="3" fill="#fff" fill-opacity=".5"/><rect x="24" y="49.5" width="8" height="9" rx="3" fill="#fff" fill-opacity=".8"/><rect x="24" y="64" width="8" height="9" rx="3" fill="#fff" fill-opacity=".5"/>
+        <path d="M39 36C39 30.5 43 28.6 47.6 31.3L77.4 48.8C82.2 51.6 82.2 56.4 77.4 59.2L47.6 76.7C43 79.4 39 77.5 39 72Z" fill="#fff"/>
+        <path d="M55 46L63 54L55 62L47 54Z" fill="url(#lgC)"/>
+        <path d="M81 17C81.9 22.4 83.6 24.1 89 25C83.6 25.9 81.9 27.6 81 33C80.1 27.6 78.4 25.9 73 25C78.4 24.1 80.1 22.4 81 17Z" fill="#fff"/>
       </svg>
-      <div>
-        <h1>Editor de Video Nexora</h1>
+      <div class="bt">
+        <h1>Editor <em>Nexora</em></h1>
         <p>Crea y edita tus videos desde el celular</p>
       </div>
+      <button class="iconbtn" id="btnPrivTop" aria-label="Política de privacidad"></button>
     </header>
 
-    <button class="new" id="btnNew">
-      <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
-      <span><strong>Nuevo proyecto</strong><span>Importa videos y fotos de tu galería</span></span>
+    <button class="hero" id="btnNew">
+      <span class="row1">
+        <span class="plus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+        <span>
+          <small>Empieza aquí</small>
+          <strong>Nuevo proyecto</strong>
+          <span class="fmt" id="heroFmt"></span>
+        </span>
+      </span>
+      <span class="strip" aria-hidden="true">
+        <b style="left:6px;width:30%"></b><b class="c2" style="left:calc(30% + 10px);width:24%"></b><b style="left:calc(54% + 14px);width:calc(46% - 20px)"></b>
+        <i class="dk" style="left:20%"></i><i class="dk" style="left:64%"></i>
+        <span class="ph"></span>
+      </span>
     </button>
+
+    <div class="sec"><h2>Formato</h2><span id="fmtHint">Elige antes de crear</span></div>
     <div class="formats" id="homeFormats" role="group" aria-label="Formato del proyecto"></div>
 
-    <h2>Tus proyectos</h2>
+    <div class="sec"><h2>Herramientas</h2><span>Toca una para empezar</span></div>
+    <div class="feats" id="feats"></div>
+
+    <div class="sec"><h2>Tus proyectos<span class="count" id="projCount" hidden></span></h2></div>
     <div id="projects"></div>
     <footer class="foot"><button id="btnPriv"></button><br>© 2026 Nexora · Eduard Gamer</footer>
+    </div>
   </section>
 
   <!-- Editor -->
@@ -351,6 +424,7 @@ textarea.txt{width:100%;min-height:78px;border-radius:14px;background:var(--surf
       <div class="time" id="time"><b>00:00</b> / 00:00</div>
       <div class="mid"><button class="play" id="btnPlay" aria-label="Reproducir"></button></div>
       <div class="right">
+        <button class="iconbtn kfbtn" id="btnKf" aria-label="Agregar fotograma clave" hidden></button>
         <button class="iconbtn" id="btnUndo" aria-label="Deshacer"></button>
         <button class="iconbtn" id="btnRedo" aria-label="Rehacer"></button>
       </div>
@@ -445,6 +519,7 @@ const ICONS = {
   freeze:'M12 2v20M2 12h20M5 5l14 14M19 5 5 19',
   wave:'M2 12h3l3-8 4 16 4-12 3 4h3',
   mic:'M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3',
+  kfadd:'M13 6l6.5 6.5L13 19l-6.5-6.5zM4 2v5M1.5 4.5h5', kfdel:'M13 6l6.5 6.5L13 19l-6.5-6.5zM1.5 4.5h5',
   ratio:'M3 6h18v12H3zM7 10v4M17 10v4',
   opacity:'M12 2.7 6.3 8.4a8 8 0 1 0 11.4 0zM12 2.7V21',
   shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', aa:'M3 18 8 6l5 12M5 14h6M15 13a3 3 0 1 0 6 0v5M21 13a3 3 0 1 0-6 0'
@@ -636,7 +711,7 @@ function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 7
 async function saveNow() {
   clearTimeout(saveTimer); if (!P) return;
   const first = P.clips[0] && media.get(P.clips[0].mediaId);
-  const rec = { id:P.id, name:P.name, aspect:P.aspect, bg:P.bg, clips:P.clips, texts:P.texts, audios:P.audios, overlays:P.overlays || [], created:P.created, updated:Date.now(), thumb:first ? first.thumb : '', duration:total() };
+  const rec = { id:P.id, name:P.name, aspect:P.aspect, bg:P.bg, clips:P.clips, texts:P.texts, audios:P.audios, overlays:P.overlays || [], created:P.created, updated:Date.now(), thumb:first ? (first.cover || first.thumb) : '', duration:total() };
   const r = await dbPut('projects', JSON.parse(JSON.stringify(rec)));
   if (r === null && !warnedSpace) { warnedSpace = true; toast('No se pudo guardar el proyecto en este dispositivo'); }
 }
@@ -661,9 +736,17 @@ function setVol(m, v) { if (m.gain) m.gain.gain.value = v; else m.el.volume = cl
 
 /* ---------- Medios ---------- */
 function once(el, ev, ms) { return new Promise(r => { let done = false; const f = () => { if (done) return; done = true; el.removeEventListener(ev, f); r(); }; el.addEventListener(ev, f); setTimeout(f, ms); }); }
-function makeThumb(src, w, h) {
+function makeThumb(src, w, h, size) {
   if (!w || !h) return '';
-  try { const c = document.createElement('canvas'); c.height = 96; c.width = Math.max(1, Math.round(96 * w / h)); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .7); } catch (e) { return ''; }
+  size = size || 96;
+  try {
+    // size = lado corto en píxeles (las miniaturas grandes son para las tarjetas de proyecto)
+    const k = size / Math.min(w, h), c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+    if (size === 96) { c.height = 96; c.width = Math.max(1, Math.round(96 * w / h)); }
+    const g = c.getContext('2d'); g.imageSmoothingQuality = 'high'; g.drawImage(src, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', size > 96 ? .86 : .7);
+  } catch (e) { return ''; }
 }
 async function addMedia(blob, kind, id, name) {
   id = id || uid();
@@ -675,6 +758,7 @@ async function addMedia(blob, kind, id, name) {
     m.el = el; m.w = el.naturalWidth; m.h = el.naturalHeight; m.duration = 3;
     if (!m.w) { URL.revokeObjectURL(url); return null; }
     m.thumb = makeThumb(el, m.w, m.h);
+    m.cover = makeThumb(el, m.w, m.h, 480);
   } else {
     const el = document.createElement(kind === 'audio' ? 'audio' : 'video');
     el.preload = 'auto'; el.playsInline = true; el.setAttribute('playsinline', ''); el.setAttribute('webkit-playsinline', '');
@@ -690,6 +774,7 @@ async function addMedia(blob, kind, id, name) {
       await once(el, 'seeked', 3000);
       m.w = el.videoWidth || m.w; m.h = el.videoHeight || m.h;
       m.thumb = makeThumb(el, m.w, m.h);
+      m.cover = makeThumb(el, m.w, m.h, 480);
     }
     el.addEventListener('seeked', () => { if (m.pending != null) { const w = m.pending; m.pending = null; if (Math.abs(el.currentTime - w) > .03) el.currentTime = w; } dirty = true; });
     el.addEventListener('loadeddata', () => { dirty = true; });
@@ -728,6 +813,96 @@ function locate(tt) {
 }
 function clipStartOf(c) { let s = 0; for (const x of P.clips) { if (x === c) return s; s += clipLen(x); } return 0; }
 
+/* ---------- Fotogramas clave ----------
+   c.kf = [{ t, x, y, s, r, a, v }] ordenados por t (tiempo dentro del archivo, así cortar o recortar no los mueve).
+   Entre dos fotogramas los valores se interpolan con una curva suave. */
+const KF_KEYS = ['x', 'y', 's', 'r', 'a', 'v'];
+const easeIO = p => p * p * (3 - 2 * p);
+function baseProps(c) { const tf = c.tf || { x: 0, y: 0, s: 1, r: 0 }; return { x: tf.x || 0, y: tf.y || 0, s: tf.s || 1, r: tf.r || 0, a: c.op == null ? 1 : c.op, v: c.volume == null ? 1 : c.volume }; }
+function clipProps(c, local) {
+  const k = c.kf;
+  if (!k || !k.length || local == null) return baseProps(c);
+  if (local <= k[0].t) return { ...k[0] };
+  const last = k[k.length - 1];
+  if (local >= last.t) return { ...last };
+  for (let i = 1; i < k.length; i++) {
+    if (local < k[i].t) {
+      const A = k[i - 1], B = k[i], p = easeIO((local - A.t) / Math.max(1e-6, B.t - A.t)), o = { t: local };
+      for (const key of KF_KEYS) o[key] = A[key] + (B[key] - A[key]) * p;
+      return o;
+    }
+  }
+  return { ...last };
+}
+const hasKf = c => !!(c && c.kf && c.kf.length);
+function headLocal(c) { if (!P || !P.clips.length) return null; const l = locate(t); return l && l.c === c ? l.local : null; }
+function kfAt(c, local) {
+  if (!hasKf(c) || local == null) return -1;
+  const tol = Math.max(.04, 8 / pxs) * (kindOf(c) === 'image' ? 1 : c.speed);
+  let best = -1, bd = tol;
+  c.kf.forEach((k, i) => { const d = Math.abs(k.t - local); if (d <= bd) { bd = d; best = i; } });
+  return best;
+}
+/* Cambia posición, tamaño, giro, opacidad o volumen. Con fotogramas clave, edita (o crea) el del cabezal. */
+function setClipProps(c, patch) {
+  if (hasKf(c)) {
+    const local = headLocal(c);
+    if (local == null) { toast('Pon el cabezal sobre el clip para editar sus fotogramas clave'); return false; }
+    let i = kfAt(c, local);
+    if (i < 0) { const k = clipProps(c, local); k.t = local; c.kf.push(k); c.kf.sort((a, b) => a.t - b.t); i = c.kf.indexOf(k); renderTimeline(); }
+    Object.assign(c.kf[i], patch);
+    return true;
+  }
+  if ('x' in patch || 'y' in patch || 's' in patch || 'r' in patch) { const b = baseProps(c); c.tf = { x: patch.x ?? b.x, y: patch.y ?? b.y, s: patch.s ?? b.s, r: patch.r ?? b.r }; }
+  if ('a' in patch) c.op = patch.a;
+  if ('v' in patch) c.volume = patch.v;
+  return true;
+}
+const kfCopy = (c, shift) => c.kf ? c.kf.map(k => ({ ...k, t: k.t - (shift || 0) })) : undefined;
+function kfTarget() {
+  if (!P || !P.clips.length) return null;
+  if (sel && sel.kind === 'clip') return getSel();
+  if (sel) return null;
+  const l = locate(t); return l ? l.c : null;
+}
+function toggleKf() {
+  if (!P || !P.clips.length) return toast('Agrega un video o una foto primero');
+  if (playing) setPlaying(false);
+  const l = locate(t);
+  let c = kfTarget();
+  if (!c) { c = l.c; }
+  if (!(sel && sel.kind === 'clip' && sel.id === c.id)) select({ kind: 'clip', id: c.id });
+  if (l.c !== c) return toast('Pon el cabezal sobre el clip seleccionado');
+  const i = kfAt(c, l.local);
+  if (i >= 0) {
+    const [k] = c.kf.splice(i, 1);
+    if (!c.kf.length) { c.tf = { x: k.x, y: k.y, s: k.s, r: k.r }; c.op = k.a; if (c.volume !== 0) c.volume = k.v; delete c.kf; }
+    toast('Fotograma clave eliminado');
+  } else {
+    const first = !hasKf(c), k = clipProps(c, l.local); k.t = l.local;
+    c.kf = (c.kf || []).concat(k).sort((a, b) => a.t - b.t);
+    toast(first ? 'Fotograma agregado. Mueve el cabezal y cambia posición, tamaño, giro, opacidad o volumen' : 'Fotograma clave agregado');
+  }
+  commit(); updKfUI(true); dirty = true;
+}
+let kfState = '';
+function updKfUI(force) {
+  const b = $('#btnKf'); if (!b) return;
+  const has = !!(P && P.clips.length);
+  b.hidden = !has;
+  if (!has) { kfState = ''; return; }
+  const c = kfTarget(), l = locate(t), onClip = !!(c && l && l.c === c);
+  const idx = onClip ? kfAt(c, l.local) : -1;
+  const st = (c ? c.id : '-') + '|' + onClip + '|' + idx;
+  if (st === kfState && !force) return;
+  kfState = st;
+  b.disabled = !onClip;
+  b.classList.toggle('on', idx >= 0);
+  b.innerHTML = ic(idx >= 0 ? 'kfdel' : 'kfadd');
+  b.setAttribute('aria-label', idx >= 0 ? 'Quitar fotograma clave' : 'Agregar fotograma clave');
+  tlin.querySelectorAll('.kf').forEach(d => d.classList.toggle('on', !!c && d.dataset.cid === c.id && +d.dataset.kf === idx));
+}
+
 /* ---------- Reproducción ---------- */
 function drive(m, want, rate, vol, vfx, nr, vq) {
   const el = m.el; setVol(m, vol); setFx(m, vfx, nr, vq);
@@ -745,7 +920,7 @@ function syncMedia() {
   if (!P) return;
   const active = new Set();
   const loc = locate(t);
-  if (loc) { const m = media.get(loc.c.mediaId); if (m && m.kind === 'video') { active.add(m.id); drive(m, Math.min(loc.local, loc.c.out - .03), loc.c.speed, loc.c.volume, loc.c.vfx, loc.c.nr, loc.c.vq); } }
+  if (loc) { const m = media.get(loc.c.mediaId); if (m && m.kind === 'video') { active.add(m.id); drive(m, Math.min(loc.local, loc.c.out - .03), loc.c.speed, loc.c.volume === 0 ? 0 : clipProps(loc.c, loc.local).v, loc.c.vfx, loc.c.nr, loc.c.vq); } }
   for (const a of P.audios) {
     const m = media.get(a.mediaId); if (!m) continue;
     if (t >= a.start && t < a.start + aLen(a)) { active.add(m.id); drive(m, a.in + (t - a.start), 1, a.volume, a.vfx, a.nr, a.vq); }
@@ -944,12 +1119,12 @@ function drawClipLayer(loc, W, H) {
   const ok = !!(m && sw && sh && (m.kind === 'image' || src.readyState >= 2));
   paintBg(g, W, H, ok ? src : null, sw, sh);
   if (!ok) return false;
-  const tf = c.tf || TF0, A = clipAnim(c, loc.lt, loc.len);
+  const tf = clipProps(c, loc.local), A = clipAnim(c, loc.lt, loc.len);
   const base = c.fit === 'cover' ? Math.max(W / sw, H / sh) : Math.min(W / sw, H / sh);
   const s = base * (tf.s || 1) * A.s, dw = sw * s, dh = sh * s;
   const rot = (tf.r || 0) + A.r;
   g.save();
-  g.globalAlpha = clamp(A.a, 0, 1);
+  g.globalAlpha = clamp(A.a * (tf.a == null ? 1 : tf.a), 0, 1);
   g.translate(W / 2 + ((tf.x || 0) + A.dx) * W, H / 2 + ((tf.y || 0) + A.dy) * H);
   if (rot) g.rotate(rot);
   if (c.mask && c.mask.type && c.mask.type !== 'none') maskClip(g, c.mask, dw, dh);
@@ -1455,7 +1630,9 @@ function renderTimeline() {
   P.clips.forEach((c, i) => {
     const L = clipLen(c), w = L * pxs, m = media.get(c.mediaId);
     const on = sel && sel.kind === 'clip' && sel.id === c.id;
-    v += `<button class="clip${on ? ' sel' : ''}" data-k="clip" data-id="${c.id}" style="left:${pad + x * pxs + 1}px;width:${Math.max(6, w - 2)}px;background-image:url('${m ? m.thumb : ''}')" aria-label="Clip ${i + 1}, ${f1(L)}"><span class="d">${f1(L)}</span>${c.filter !== 'original' ? '<span class="fx">' + ic('wand') + '</span>' : ''}</button>`;
+    const img = kindOf(c) === 'image', lo = img ? 0 : c.in, hi2 = img ? c.dur : c.out, sp = img ? 1 : c.speed;
+    const kfs = hasKf(c) ? c.kf.map((k, j) => k.t >= lo - .001 && k.t <= hi2 + .001 ? `<span class="kf" data-kf="${j}" data-cid="${c.id}" style="left:${((k.t - lo) / sp) * pxs - 1}px" role="button" aria-label="Ir al fotograma clave ${j + 1}"></span>` : '').join('') : '';
+    v += `<button class="clip${on ? ' sel' : ''}" data-k="clip" data-id="${c.id}" style="left:${pad + x * pxs + 1}px;width:${Math.max(6, w - 2)}px;background-image:url('${m ? m.thumb : ''}')" aria-label="Clip ${i + 1}, ${f1(L)}"><span class="d">${f1(L)}</span>${c.filter !== 'original' ? '<span class="fx">' + ic('wand') + '</span>' : ''}${kfs}</button>`;
     if (i > 0) v += `<button class="trans${c.trans !== 'none' ? ' on' : ''}" data-k="trans" data-id="${c.id}" style="left:${pad + x * pxs}px" aria-label="Transición antes del clip ${i + 1}">${ic('trans')}</button>`;
     x += L;
   });
@@ -1472,6 +1649,7 @@ function renderTimeline() {
   if (!P.audios.length) ar = `<button class="addrow" data-k="addaudio" style="left:${pad}px">${ic('plus')} Agregar audio</button>`;
   tlin.innerHTML = `<div class="ruler">${ruler}</div><div class="row vrow">${v}</div><div class="row orow">${orw}</div><div class="row trow">${tr}</div><div class="row arow">${ar}</div>`;
   setScrollFromT(true);
+  updKfUI(true);
 }
 function setScrollFromT(force) {
   const L = Math.round(t * pxs);
@@ -1486,6 +1664,18 @@ tl.addEventListener('scroll', () => {
   syncMedia(); dirty = true;
 }, { passive: true });
 tlin.addEventListener('click', e => {
+  const d = e.target.closest('[data-kf]');
+  if (d) {
+    const c = P.clips.find(x => x.id === d.dataset.cid), k = c && c.kf && c.kf[+d.dataset.kf];
+    if (k) {
+      if (playing) setPlaying(false);
+      const img = kindOf(c) === 'image';
+      t = clamp(clipStartOf(c) + (k.t - (img ? 0 : c.in)) / (img ? 1 : c.speed), 0, total());
+      if (!(sel && sel.id === c.id)) select({ kind: 'clip', id: c.id }); else setScrollFromT(true);
+      syncMedia(); dirty = true; updKfUI(true);
+    }
+    return;
+  }
   const b = e.target.closest('[data-k]');
   if (!b) { if (sel) select(null); return; }
   const k = b.dataset.k, id = b.dataset.id;
@@ -1501,6 +1691,7 @@ tlin.addEventListener('click', e => {
 });
 function updateTimeUI() {
   $('#time').innerHTML = `<b>${fmt(t)}</b> / ${fmt(total())}`;
+  updKfUI();
   if (playing || exporting) setScrollFromT();
   $('#stageEmpty').hidden = !(P && !P.clips.length && !P.texts.length);
 }
@@ -1527,6 +1718,7 @@ function renderTools() {
       + (img ? tool('clock', 'Duración', 'trimSheet') : tool('speed', 'Velocidad', 'speedSheet') + tool('vol', 'Volumen', 'volSheet'))
       + tool('zap', 'Animaciones', 'clipAnimSheet') + tool('sparkles', 'Efectos', 'effectSheet') + tool('wand', 'Filtros', 'filterSheet') + tool('sliders', 'Ajustar', 'adjustSheet') + tool('mask', 'Máscara', 'maskSheet')
       + (img ? '' : tool('freeze', 'Congelar', 'freeze') + tool('trim', 'Recortar', 'trimSheet') + tool('vol', volOf(it) === 0 ? 'Activar sonido' : 'Silenciar clip', 'muteClip') + tool('music', 'Extraer audio', 'extractAudio') + tool('wave', it.nr ? 'Ruido: activo' : 'Reducir ruido', 'nr') + vqTools(it) + tool('mic', 'Efectos de voz', 'voiceSheet'))
+      + tool('kfadd', 'Fotograma clave', 'toggleKf') + tool('opacity', 'Opacidad', 'opacitySheet')
       + tool('trans', 'Transición', 'transSheet') + tool('fit', 'Encajar', 'fitSheet') + tool('copy', 'Duplicar', 'dup') + tool('left', 'Mover', 'moveL') + tool('right', 'Mover', 'moveR') + tool('trash', 'Eliminar', 'del', 'danger');
   } else if (sel.kind === 'text' && it.kind === 'sticker') {
     h = tool('left', '', 'back', 'back') + tool('sliders', 'Tamaño y color', 'sk:tam') + tool('zap', 'Animación', 'sk:anim') + tool('clock', 'Duración', 'sk:tiempo') + tool('target', 'Al cabezal', 'toHead') + tool('copy', 'Duplicar', 'dup') + tool('trash', 'Eliminar', 'del', 'danger');
@@ -1563,7 +1755,7 @@ const ACT = {
   back: () => select(null),
   editClip: () => { const c = focusClip(); if (c) showHint(); },
   addAudio: () => audioMenu(),
-  muteClip: () => muteClip(), extractAudio: () => extractAudio(), vqIso: () => toggleVq('iso'), vqEnh: () => toggleVq('enh'),
+  muteClip: () => muteClip(), toggleKf: () => toggleKf(), extractAudio: () => extractAudio(), vqIso: () => toggleVq('iso'), vqEnh: () => toggleVq('enh'),
   addText: () => {
     const T = total();
     const tx = { id: uid(), text: 'Tu texto', start: T > 0 ? Math.min(t, Math.max(0, T - .5)) : 0, dur: 3, x: .5, y: .72, size: .085, font: 'rounded', color: '#FFFFFF', style: 'manga', anim: 'pop', out: 'none', loop: 'none' };
@@ -1581,12 +1773,12 @@ const ACT = {
     if (sel && sel.kind === 'clip' && sel.id !== l.c.id) return toast('Mueve el cabezal sobre el clip seleccionado');
     if (l.lt < .1 || l.len - l.lt < .1) return toast('Mueve el cabezal dentro del clip para dividirlo');
     const c = l.c, c2 = { ...c, id: uid(), trans: 'none' };
-    if (kindOf(c) === 'image') { c2.dur = c.dur - l.lt; c.dur = l.lt; } else { c2.in = l.local; c.out = l.local; }
+    if (kindOf(c) === 'image') { c2.dur = c.dur - l.lt; c.dur = l.lt; c2.kf = kfCopy(c, l.lt); } else { c2.in = l.local; c.out = l.local; c2.kf = kfCopy(c); }
     P.clips.splice(l.i + 1, 0, c2); commit(); select({ kind: 'clip', id: c2.id }); toast('Clip dividido');
   },
   dup: () => {
     const it = getSel(); if (!it) return;
-    if (sel.kind === 'clip') { const i = P.clips.indexOf(it); const c2 = { ...it, id: uid() }; P.clips.splice(i + 1, 0, c2); commit(); select({ kind: 'clip', id: c2.id }); }
+    if (sel.kind === 'clip') { const i = P.clips.indexOf(it); const c2 = { ...it, id: uid(), kf: kfCopy(it) }; P.clips.splice(i + 1, 0, c2); commit(); select({ kind: 'clip', id: c2.id }); }
     else if (sel.kind === 'text') { const t2 = { ...it, id: uid(), y: clamp(it.y + .08, 0, 1) }; P.texts.push(t2); commit(); select({ kind: 'text', id: t2.id }); }
     toast('Duplicado');
   },
@@ -1671,10 +1863,13 @@ function speedSheet() {
 }
 function volSheet() {
   const it = getSel() || focusClip(); if (!it) return;
+  const isClip = P.clips.includes(it), kf = isClip && hasKf(it);
+  const v0 = kf ? clipProps(it, headLocal(it)).v : volOf(it);
   openSheet('Volumen', body => {
-    body.innerHTML = sliderHTML('vv', 'Volumen', 0, 2, .05, it.volume, Math.round(it.volume * 100) + '%') + `<div class="pills"><button class="pill" id="mute">${ic('vol')} Silenciar</button></div>`;
-    bindSlider(body, 'vv', v => Math.round(v * 100) + '%', v => { it.volume = v; syncMedia(); });
-    body.querySelector('#mute').onclick = () => { it.volume = 0; body.querySelector('#vv').value = 0; body.querySelector('#vvo').textContent = '0%'; changed(); syncMedia(); };
+    body.innerHTML = (kf ? `<p class="hint">${ic('kfadd')} Este clip tiene fotogramas clave: el volumen se guarda en el fotograma del cabezal.</p>` : '')
+      + sliderHTML('vv', 'Volumen', 0, 2, .05, v0, Math.round(v0 * 100) + '%') + `<div class="pills"><button class="pill" id="mute">${ic('vol')} Silenciar</button></div>`;
+    bindSlider(body, 'vv', v => Math.round(v * 100) + '%', v => { if (kf) { if (it.volume === 0) it.volume = 1; setClipProps(it, { v }); } else it.volume = v; syncMedia(); });
+    body.querySelector('#mute').onclick = () => { if (kf) setClipProps(it, { v: 0 }); else it.volume = 0; body.querySelector('#vv').value = 0; body.querySelector('#vvo').textContent = '0%'; changed(); syncMedia(); };
   });
 }
 function trimSheet() {
@@ -1723,7 +1918,7 @@ function fitSheet() {
     body.innerHTML = optGrid([['contain', `<span class="big">${ic('fit')}</span>Ajustar`], ['cover', `<span class="big">${ic('image')}</span>Llenar`]], c.fit)
       + `<p class="hint" style="margin-top:12px">Ajustar muestra el video completo. Llenar lo recorta para cubrir toda la pantalla. También puedes moverlo con un dedo y cambiar su tamaño o girarlo con dos.</p><div class="pills"><button class="pill" id="tfReset">${ic('undo')} Restablecer posición</button></div>`;
     onPick(body, v => { c.fit = v; changed(); });
-    body.querySelector('#tfReset').onclick = e => { e.stopPropagation(); c.tf = { x: 0, y: 0, s: 1, r: 0 }; changed(); };
+    body.querySelector('#tfReset').onclick = e => { e.stopPropagation(); if (setClipProps(c, { x: 0, y: 0, s: 1, r: 0 })) changed(); };
   });
 }
 function ratioBox(a, b, max) { const s = max / Math.max(a, b); return `<i class="ratio" style="width:${Math.round(a * s)}px;height:${Math.round(b * s)}px"></i>`; }
@@ -1871,12 +2066,13 @@ function gestItem() {
   return P.texts.find(x => x.id === gest.id);
 }
 function gestSnapshot(it) {
-  if (gest.kind === 'clip') { it.tf = it.tf || { x: 0, y: 0, s: 1, r: 0 }; return { ...it.tf }; }
+  if (gest.kind === 'clip') { const p = clipProps(it, headLocal(it)); return { x: p.x, y: p.y, s: p.s, r: p.r }; }
   if (gest.kind === 'overlay') return { x: it.x, y: it.y, s: it.s, r: it.r || 0 };
   return { x: it.x, y: it.y, s: it.size, r: it.rot || 0 };
 }
 function gestStart() {
   const it = gestItem(); if (!it) return;
+  if (gest.kind === 'clip' && hasKf(it) && headLocal(it) == null) { gest = null; toast('Pon el cabezal sobre el clip para editar sus fotogramas clave'); return; }
   const pts = [...ptrs.values()];
   gest.orig = gestSnapshot(it);
   if (pts.length >= 2) { gest.mode = 'pinch'; gest.d0 = dist(pts[0], pts[1]) || 1; gest.a0 = ang(pts[0], pts[1]); gest.c0 = [(pts[0][0] + pts[1][0]) / 2, (pts[0][1] + pts[1][1]) / 2]; }
@@ -1921,7 +2117,7 @@ cv.addEventListener('pointermove', e => {
   }
   if (gest.kind === 'clip') {
     if (Math.abs(x) < .015) x = 0; if (Math.abs(y) < .015) y = 0;
-    it.tf = { x: clamp(x, -1.5, 1.5), y: clamp(y, -1.5, 1.5), s: clamp(s, .1, 8), r };
+    setClipProps(it, { x: clamp(x, -1.5, 1.5), y: clamp(y, -1.5, 1.5), s: clamp(s, .1, 8), r });
   } else if (gest.kind === 'overlay') { it.x = clamp(x, -.2, 1.2); it.y = clamp(y, -.2, 1.2); it.s = clamp(s, .05, 3); it.r = r; }
   else { it.x = clamp(x, 0, 1); it.y = clamp(y, 0, 1); it.size = clamp(s, .02, it.kind === 'sticker' ? 1.2 : .5); it.rot = r; }
   gest.moved = true; dirty = true;
@@ -1942,7 +2138,7 @@ cv.addEventListener('pointerup', endPtr); cv.addEventListener('pointercancel', e
 let hintTimer;
 function showHint(msg) {
   const h = $('#stageHint'); h.textContent = msg || 'Usa dos dedos para cambiar el tamaño del video';
-  h.hidden = false; clearTimeout(hintTimer); hintTimer = setTimeout(() => { h.hidden = true; }, 3500);
+  h.hidden = false; clearTimeout(hintTimer); hintTimer = setTimeout(() => { h.hidden = true; }, Math.max(3500, h.textContent.length * 75));
 }
 
 /* ---------- Paneles nuevos ---------- */
@@ -2144,16 +2340,18 @@ async function freezeFrame() {
   const c = l.c; let at = l.i + 1;
   if (l.lt > .1 && l.len - l.lt > .1) { const c2 = { ...c, id: uid(), trans: 'none', ain: 'none' }; c2.in = l.local; c.out = l.local; c.aout = 'none'; P.clips.splice(l.i + 1, 0, c2); }
   else if (l.lt <= .1) at = l.i;
-  const fc = { id: uid(), mediaId: mm.id, in: 0, out: 0, dur: 3, speed: 1, volume: 1, filter: c.filter, fit: c.fit, trans: 'none', tf: c.tf ? { ...c.tf } : undefined, adj: c.adj ? { ...c.adj } : undefined, mask: c.mask ? { ...c.mask } : undefined };
+  const fp = clipProps(c, l.local);
+  const fc = { id: uid(), mediaId: mm.id, in: 0, out: 0, dur: 3, speed: 1, volume: 1, filter: c.filter, fit: c.fit, trans: 'none', tf: { x: fp.x, y: fp.y, s: fp.s, r: fp.r }, op: fp.a, adj: c.adj ? { ...c.adj } : undefined, mask: c.mask ? { ...c.mask } : undefined };
   P.clips.splice(at, 0, fc);
   t = clipStartOf(fc) + .001; commit(); select({ kind: 'clip', id: fc.id }); syncMedia(); toast('Cuadro congelado (3 s)');
 }
 function opacitySheet() {
   const o = getSel(); if (!o) return;
+  const isClip = sel.kind === 'clip';
   openSheet('Opacidad', body => {
-    const v0 = o.op == null ? 1 : o.op;
-    body.innerHTML = sliderHTML('opv', 'Opacidad', 0, 1, .01, v0, Math.round(v0 * 100) + '%');
-    bindSlider(body, 'opv', v => Math.round(v * 100) + '%', v => { o.op = v; });
+    const v0 = isClip ? clipProps(o, headLocal(o)).a : (o.op == null ? 1 : o.op);
+    body.innerHTML = (isClip && hasKf(o) ? `<p class="hint">${ic('kfadd')} La opacidad se guarda en el fotograma clave del cabezal.</p>` : '') + sliderHTML('opv', 'Opacidad', 0, 1, .01, v0, Math.round(v0 * 100) + '%');
+    bindSlider(body, 'opv', v => Math.round(v * 100) + '%', v => { if (isClip) setClipProps(o, { a: v }); else o.op = v; });
   });
 }
 function bgSheet() {
@@ -2323,7 +2521,7 @@ fileMedia.addEventListener('change', () => {
   if (!P) { if (!newPending) return; newPending = false; createProject(); }
   const ents = files.map(f => ({ blob: f, name: f.name, kind: f.type.startsWith('image') ? 'image' : 'video' }));
   if (overlayPending) { overlayPending = false; importOverlays(ents); return; }
-  importVisual(files.map(f => ({ blob: f, name: f.name, kind: f.type.startsWith('image') ? 'image' : 'video' })));
+  importVisual(files.map(f => ({ blob: f, name: f.name, kind: f.type.startsWith('image') ? 'image' : 'video' }))).then(showTip);
 });
 fileAudio.addEventListener('change', () => {
   const f = fileAudio.files[0]; if (!f || !P) return;
@@ -2624,16 +2822,33 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && exp
 
 /* ---------- Proyectos e inicio ---------- */
 function renderFormats() {
-  $('#homeFormats').innerHTML = Object.entries(ASPECTS).map(([k, [a, b, l]]) => `<button class="fchip" data-f="${esc(k)}" aria-pressed="${k === homeAspect}">${k === 'orig' ? '<i style="width:14px;height:14px;border-style:dashed"></i>' : ratioBox(a, b, 16)}${k === 'orig' ? 'Original' : k === '5.8' ? '5.8"' : k} <span style="font-weight:500;color:var(--muted)">${l}</span></button>`).join('');
+  $('#homeFormats').innerHTML = Object.entries(ASPECTS).map(([k, [a, b, l]]) => `<button class="fcard" data-f="${esc(k)}" aria-pressed="${k === homeAspect}"><span class="fr">${k === 'orig' ? '<i style="width:30px;height:30px;border-style:dashed"></i>' : `<i style="${ratioStyle(a, b, 36)}"></i>`}</span><b>${aspectLabel(k)}</b><small>${l}</small></button>`).join('');
+  const [a, b, l] = ASPECTS[homeAspect];
+  $('#heroFmt').innerHTML = (homeAspect === 'orig' ? '<i style="width:11px;height:11px;border-style:dashed"></i>' : `<i style="${ratioStyle(a, b, 13)}"></i>`) + `${aspectLabel(homeAspect)} · ${l}`;
 }
 $('#homeFormats').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (b) { homeAspect = b.dataset.f; renderFormats(); } });
+
+/* Herramientas destacadas: crean un proyecto y, al terminar de importar, explican dónde está la herramienta */
+const FEATS = [
+  ['kfadd', 'Fotogramas clave', '#FF4FA3', '#8B5CF6', 'Selecciona un clip, toca el rombo junto a deshacer, mueve el cabezal y cambia el tamaño o la posición', 1],
+  ['mic', 'Grabar voz', '#8B5CF6', '#22D3EE', 'Toca Audio y luego Grabar voz'],
+  ['wave', 'Efectos de voz', '#F97316', '#FF4FA3', 'Selecciona un clip y toca Efectos de voz'],
+  ['type', 'Texto animado', '#22D3EE', '#3B82F6', 'Toca Texto en la barra de herramientas'],
+  ['wand', 'Filtros', '#EC4899', '#F59E0B', 'Toca Filtros en la barra de herramientas'],
+  ['trans', 'Transiciones', '#6366F1', '#22D3EE', 'Toca el cuadrito entre dos clips para elegir una transición'],
+  ['sparkles', 'Efectos', '#A855F7', '#EC4899', 'Toca Efectos en la barra de herramientas'],
+  ['smile', 'Stickers', '#10B981', '#22D3EE', 'Toca Stickers en la barra de herramientas']
+];
+$('#feats').innerHTML = FEATS.map(([i, l, c1, c2, , isNew], n) => `<button class="feat" data-feat="${n}"><span class="fi" style="background:linear-gradient(135deg,${c1},${c2})">${ic(i)}</span>${l}${isNew ? '<span class="new">NUEVO</span>' : ''}</button>`).join('');
+$('#feats').addEventListener('click', e => { const b = e.target.closest('[data-feat]'); if (b) startNew(FEATS[+b.dataset.feat][4]); });
 const rel = ts => { const d = (Date.now() - ts) / 1000; if (d < 60) return 'Hace un momento'; if (d < 3600) return `Hace ${Math.floor(d / 60)} min`; if (d < 86400) return `Hace ${Math.floor(d / 3600)} h`; return new Date(ts).toLocaleDateString('es', { day: 'numeric', month: 'short' }); };
 async function renderHome() {
   const list = ((await dbAll('projects')) || []).sort((a, b) => b.updated - a.updated);
-  const el = $('#projects');
-  if (!list.length) { el.className = ''; el.innerHTML = `<div class="empty">Aquí aparecerán tus ediciones.<br>Toca Nuevo proyecto para empezar con tus clips.</div>`; return; }
+  const el = $('#projects'), cnt = $('#projCount');
+  cnt.hidden = !list.length; cnt.textContent = list.length;
+  if (!list.length) { el.className = ''; el.innerHTML = `<div class="empty"><div class="ei">${ic('image')}</div><b>Todavía no tienes proyectos</b>Toca Nuevo proyecto y elige tus videos o fotos.</div>`; return; }
   el.className = 'projects';
-  el.innerHTML = list.map(p => `<div class="proj"><button class="open" data-open="${p.id}"><div class="th" style="background-image:url('${p.thumb || ''}')"></div><div class="meta"><b>${esc(p.name)}</b><small>${fmt(p.duration)} · ${rel(p.updated)}</small></div></button><button class="del" data-del="${p.id}" aria-label="Borrar ${esc(p.name)}">${ic('trash')}</button></div>`).join('');
+  el.innerHTML = list.map(p => `<div class="proj"><button class="open" data-open="${p.id}"><div class="th" style="background-image:url('${p.thumb || ''}')"><span class="dur">${fmt(p.duration)}</span>${p.aspect && p.aspect !== 'orig' ? `<span class="asp">${esc(aspectLabel(p.aspect))}</span>` : ''}</div><div class="meta"><b>${esc(p.name)}</b><small>${rel(p.updated)}</small></div></button><button class="del" data-del="${p.id}" aria-label="Borrar ${esc(p.name)}">${ic('trash')}</button></div>`).join('');
 }
 $('#projects').addEventListener('click', async e => {
   const d = e.target.closest('[data-del]');
@@ -2659,12 +2874,15 @@ function createProject() {
   P = { id: uid(), name, aspect: homeAspect, bg: { type: 'blur', color: '#000000' }, clips: [], texts: [], audios: [], overlays: [], created: Date.now() };
   enterEditor(); saveNow();
 }
-$('#btnNew').onclick = () => {
-  ensureAudio();
+let pendingTip = '';
+function startNew(tip) {
+  ensureAudio(); pendingTip = tip || '';
   if (HAS_GALLERY) {
-    openGallery('visual', async list => { createProject(); const e = await fetchGalleryItems(list); await importVisual(e); });
+    openGallery('visual', async list => { createProject(); const e = await fetchGalleryItems(list); await importVisual(e); showTip(); });
   } else { newPending = true; fileMedia.value = ''; fileMedia.click(); }
-};
+}
+function showTip() { const tip = pendingTip; pendingTip = ''; if (tip) setTimeout(() => showHint(tip), 1300); }
+$('#btnNew').onclick = () => startNew();
 async function openProject(id) {
   ensureAudio();
   const list = (await dbAll('projects')) || []; const rec = list.find(p => p.id === id); if (!rec) return toast('No se encontró el proyecto');
@@ -2676,6 +2894,8 @@ async function openProject(id) {
   P = { ...rec }; P.overlays = (P.overlays || []).filter(o => media.has(o.mediaId));
   P.clips = P.clips.filter(c => media.has(c.mediaId)); P.audios = P.audios.filter(a => media.has(a.mediaId));
   enterEditor();
+  const fm = P.clips[0] && media.get(P.clips[0].mediaId);
+  if (fm && fm.cover && rec.thumb !== fm.cover) saveSoon();   // actualiza miniaturas viejas a alta calidad
 }
 $('#btnClose').onclick = async () => {
   closeSheet(); setPlaying(false); await saveNow(); clearMedia(); P = null;
@@ -2686,11 +2906,12 @@ $('#projName').addEventListener('keydown', e => { if (e.key === 'Enter') e.targe
 
 /* ---------- Controles ---------- */
 $('#btnClose').innerHTML = ic('x'); $('#docClose').innerHTML = ic('x'); $('#btnPriv').innerHTML = ic('shield') + 'Política de privacidad';
-$('#btnPriv').onclick = openPrivacy; $('#docClose').onclick = closePrivacy; $('#gClose').innerHTML = ic('x'); $('#btnPlay').innerHTML = ic('play'); $('#btnUndo').innerHTML = ic('undo'); $('#btnRedo').innerHTML = ic('redo');
+$('#btnPriv').onclick = openPrivacy; $('#btnPrivTop').innerHTML = ic('shield'); $('#btnPrivTop').onclick = openPrivacy; $('#docClose').onclick = closePrivacy; $('#gClose').innerHTML = ic('x'); $('#btnPlay').innerHTML = ic('play'); $('#btnUndo').innerHTML = ic('undo'); $('#btnRedo').innerHTML = ic('redo');
 $('#btnAddClip').innerHTML = ic('plus'); $('#zIn').innerHTML = ic('zin'); $('#zOut').innerHTML = ic('zout'); $('#shDone').innerHTML = ic('check');
 $('#btnEmptyAdd').innerHTML = ic('plus') + 'Agregar videos o fotos';
 $('#btnEmptyAdd').onclick = pickMedia; $('#btnAddClip').onclick = pickMedia;
 $('#btnPlay').onclick = () => setPlaying(!playing);
+$('#btnKf').onclick = toggleKf;
 $('#zIn').onclick = () => { pxs = clamp(pxs * 1.4, 12, 320); renderTimeline(); };
 $('#zOut').onclick = () => { pxs = clamp(pxs / 1.4, 12, 320); renderTimeline(); };
 document.addEventListener('keydown', e => {
