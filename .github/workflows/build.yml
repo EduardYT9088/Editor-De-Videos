@@ -36,8 +36,8 @@ jobs:
                   applicationId = "com.nexora.animes"
                   minSdk = 26
                   targetSdk = 34
-                  versionCode = 1
-                  versionName = "1.0"
+                  versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
+                  versionName = "1.1." + (System.getenv("GITHUB_RUN_NUMBER") ?: "0")
               }
               compileOptions {
                   sourceCompatibility = JavaVersion.VERSION_17
@@ -499,14 +499,18 @@ jobs:
                   public boolean begin(String name, String mime) {
                       try {
                           closeQuietly();
+                          boolean isImage = mime != null && mime.startsWith("image/");
+                          String folder = isImage ? Environment.DIRECTORY_PICTURES : Environment.DIRECTORY_MOVIES;
                           if (Build.VERSION.SDK_INT >= 29) {
                               ContentValues cv = new ContentValues();
                               cv.put(MediaStore.MediaColumns.DISPLAY_NAME, name);
                               cv.put(MediaStore.MediaColumns.MIME_TYPE, mime);
-                              cv.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_MOVIES + "/Nexora");
+                              cv.put(MediaStore.MediaColumns.RELATIVE_PATH, folder + "/Nexora");
                               cv.put(MediaStore.MediaColumns.IS_PENDING, 1);
-                              saveUri = getContentResolver().insert(
-                                      MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), cv);
+                              Uri collection = isImage
+                                      ? MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                                      : MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
+                              saveUri = getContentResolver().insert(collection, cv);
                               if (saveUri == null) return false;
                               saveOut = getContentResolver().openOutputStream(saveUri);
                           } else {
@@ -514,7 +518,7 @@ jobs:
                                   runOnUiThread(() -> requestPermissions(mediaPerms("video"), REQ_MEDIA));
                                   return false;
                               }
-                              File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Nexora");
+                              File dir = new File(Environment.getExternalStoragePublicDirectory(folder), "Nexora");
                               if (!dir.exists()) dir.mkdirs();
                               legacyFile = new File(dir, name);
                               saveOut = new FileOutputStream(legacyFile);
